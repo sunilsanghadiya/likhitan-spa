@@ -1,0 +1,11 @@
+@if(control?.invalid && (control.dirty || control.touched))
+{
+    @for(errorKey of getErrorKeys(); track $index) 
+    {
+        <ng-container>
+            <div class="ant-form-item-explain-error">
+                {{ getErrorMessage(errorKey) }}
+            </div>
+        </ng-container>
+    }
+}

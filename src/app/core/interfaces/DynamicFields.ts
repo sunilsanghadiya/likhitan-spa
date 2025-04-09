@@ -1,0 +1,56 @@
+import { AbstractControl, ValidationErrors } from "@angular/forms";
+
+export type FieldType = 'input' | 'select' | 'checkbox' | 'date';
+
+export interface BaseField<T> {
+  type: FieldType; // 'text', 'number', 'select', 'checkbox', etc.
+  name: keyof T;
+  label?: string;
+  value?: any;
+  placeholder?: string;
+  validations?: ValidationRules;
+  options?: { label: string; value: any }[]; // For select, radio, etc.
+  hidden?: boolean;
+  disabled?: boolean;
+  errorMessages?: any[];
+}
+
+
+export interface TextField<T> extends BaseField<T> {
+  type: 'input' | 'select' | 'checkbox' | 'date';
+  errors?: any[];
+}
+
+export interface SelectField<T> extends BaseField<T> {
+  type: 'select';
+  options: { label: string; value: any }[];
+  errors?: any[];
+}
+
+export type FormField<T> = TextField<T> | SelectField<T>;
+
+export interface ValidationRules {
+  required?: boolean;
+  min?: number;
+  max?: number;
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+  email?: boolean;
+  password?: boolean;
+  customValidator?: (control: AbstractControl) => ValidationErrors | null;
+  errorMessages?: any[];
+}
+
+
+// export interface DynamicField {
+//   name: string;
+//   label: string;
+//   type: FieldType;
+//   placeholder?: string;
+//   options?: { label: string; value: any }[];
+//   defaultValue?: any;
+//   required?: boolean;
+//   validators?: any;
+//   errorMessages?: any[];
+// }

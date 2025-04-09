@@ -1,0 +1,18 @@
+<div nz-flex class="">
+    <nz-card class="login-card">
+        <h2 class="title">Login</h2>
+      
+          <app-dynamic-form 
+            [formGroup]="loginForm" 
+            (onSubmit)="onLogin()" 
+            [formFields]="formFields" 
+            [submitLabel]="'Login'" />          
+      
+          <!-- Forgot & Register Links -->
+          <div class="links">
+            <a nz-link (click)="forgotPassword()">Forgot password?</a>
+            <a nz-link nz-typography [routerLink]="'/register'">Register</a>
+          </div>
+      </nz-card>
+</div>
+  

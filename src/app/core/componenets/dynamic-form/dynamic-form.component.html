@@ -1,0 +1,51 @@
+<form [formGroup]="formGroup" (ngSubmit)="callSubmit()" nz-form [nzLayout]="'vertical'">
+  @for(field of formFields; track $index) {
+    <ng-container>
+      <nz-form-item nz-form-item>
+        <nz-form-label nz-form-label>
+          <label [for]="field.name" *ngIf="!field.hidden">{{ field.label }}</label>
+        </nz-form-label>
+        <nz-form-control 
+          nz-form-control  
+          [nzHasFeedback]="true"
+          [nzErrorTip]="errorTpl" 
+          [nzValidateStatus]="formGroup.get(field.name)!">
+          
+          <ng-container [ngSwitch]="field.type">
+            <!-- Input -->
+            <input 
+              *ngSwitchCase="'input'" 
+              nz-input 
+              [formControlName]="field.name" 
+              [placeholder]="field.placeholder"
+              [type]="isPassword(field) ? 'password' : 'text'"
+            />
+  
+            <!-- Select -->
+            <nz-select *ngSwitchCase="'select'" [formControlName]="field.name" [nzPlaceHolder]="field.placeholder">
+              <nz-option *ngFor="let opt of field.options" [nzLabel]="opt.label" [nzValue]="opt.value"></nz-option>
+            </nz-select>
+  
+            <!-- Checkbox -->
+            <label *ngSwitchCase="'checkbox'" nz-checkbox [formControlName]="field.name">
+              {{ field.label }}
+            </label>
+  
+            <!-- Date Picker -->
+            <nz-date-picker *ngSwitchCase="'date'" [formControlName]="field.name" [nzPlaceHolder]="field.placeholder"></nz-date-picker>
+  
+          </ng-container>
+        </nz-form-control>
+
+          <ng-template #errorTpl let-control>
+            <ng-container *ngIf="control.invalid && (control.dirty || control.touched)">
+              <app-control-error-message [control]="control" [customMessages]="field.errorMessages" />
+            </ng-container>
+          </ng-template>
+          
+      </nz-form-item>
+    </ng-container>
+  }
+
+  <button nz-button nzType="primary" nzBlock> {{ submitLabel }} </button>
+</form>

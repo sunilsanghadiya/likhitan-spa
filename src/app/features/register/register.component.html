@@ -1,0 +1,16 @@
+<div nz-flex class="">
+    <nz-card class="register-card">
+        <h2 class="title">Register</h2>
+      
+          <app-dynamic-form 
+            [formGroup]="registerForm" 
+            (onSubmit)="onRegister()" 
+            [formFields]="formFields" 
+            [submitLabel]="'Register'" />          
+      
+          <div class="links">
+            <a nz-link nz-typography [routerLink]="'/login'">Login</a>
+          </div>
+      </nz-card>
+</div>
+  
