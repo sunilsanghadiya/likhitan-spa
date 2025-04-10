@@ -83,7 +83,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         minLength: 5,
         maxLength: 512,
         pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}$',
-        isServerSideCheck: true
+        isServerSideCheck: true,
       },
       errorMessages: [ 
         { require: 'Email is required' },
@@ -103,13 +103,15 @@ export class RegisterComponent implements OnInit, OnDestroy {
         required: true,
         minLength: 8,
         password: true,
-        maxLength: 512
+        maxLength: 512,
+        pattern: `^(?!<username>).*?(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':"\\\\|,.<>\\/?]).{8,}$`
       },
       errorMessages: [ 
         { required: 'Password is required' },
         { minLength: 'Min 8 character' },
         { maxLength: 'Max 512 character' },
-        { email: 'Invalid password' }
+        { password: 'Invalid password' },
+        { pattern: "One uppercase and one lowercase and one number and one special character" }
        ]
     },
     {
