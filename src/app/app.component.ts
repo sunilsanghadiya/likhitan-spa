@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HomePageLayoutComponent } from "./shared/components/home-page-layout/home-page-layout.component";
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { AuthInterceptor } from './core/interceptors/auth-interceptors/auth.interceptor';
+import { LoadingSpinnerComponent } from "./core/componenets/loading-spinner/loading-spinner.component";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, HomePageLayoutComponent, HomePageLayoutComponent, HttpClientModule],
+  imports: [RouterOutlet, LoadingSpinnerComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
   providers: []

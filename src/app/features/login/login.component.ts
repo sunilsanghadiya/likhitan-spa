@@ -90,14 +90,14 @@ export class LoginComponent implements OnInit, OnDestroy {
       validations: {
         required: true,
         minLength: 8,
-        password: true,
+        // password: true,
         maxLength: 512
       },
       errorMessages: [
         { require: 'Password is required' },
         { minLength: 'Min 8 character' },
         { maxLength: 'Max 512 character' },
-        { email: 'Invalid password' }
+        // { password: 'Invalid password' }
       ]
     }
   ]

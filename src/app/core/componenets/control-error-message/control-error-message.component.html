@@ -1,4 +1,4 @@
-@if(control?.invalid && (control.dirty || control.touched))
+@if(control.invalid && (control.dirty || control.touched))
 {
     @for(errorKey of getErrorKeys(); track $index) 
     {

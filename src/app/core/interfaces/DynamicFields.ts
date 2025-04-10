@@ -1,4 +1,4 @@
-import { AbstractControl, ValidationErrors } from "@angular/forms";
+import { AbstractControl, FormControl, ValidationErrors } from "@angular/forms";
 
 export type FieldType = 'input' | 'select' | 'checkbox' | 'date';
 
@@ -40,17 +40,7 @@ export interface ValidationRules {
   password?: boolean;
   customValidator?: (control: AbstractControl) => ValidationErrors | null;
   errorMessages?: any[];
+  parentControl?: any;
+  isServerSideCheck?: boolean;
+  isValueStartWithParentControl?: boolean;
 }
-
-
-// export interface DynamicField {
-//   name: string;
-//   label: string;
-//   type: FieldType;
-//   placeholder?: string;
-//   options?: { label: string; value: any }[];
-//   defaultValue?: any;
-//   required?: boolean;
-//   validators?: any;
-//   errorMessages?: any[];
-// }

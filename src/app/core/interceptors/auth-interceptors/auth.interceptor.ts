@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, finalize } from 'rxjs/operators';
+import { LoadingService } from '../../services/loadingService/loading.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+  
+  constructor(private loadingService: LoadingService) { }
+  
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = localStorage.getItem('AccessToken');
     let headers = req.headers.set('Content-Type', 'application/json');
@@ -15,10 +19,16 @@ export class AuthInterceptor implements HttpInterceptor {
 
     const authReq = req.clone({ headers });
 
+    this.loadingService.show();
+
     return next.handle(authReq).pipe(
       catchError((error: HttpErrorResponse) => {
         console.error('HTTP Error:', error);
+        this.loadingService.hide();
         return throwError(() => error);
+      }),
+      finalize(() => {
+        this.loadingService.hide();
       })
     );
   }

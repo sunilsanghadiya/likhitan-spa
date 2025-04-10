@@ -2,13 +2,13 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { DynamicFormComponent } from '../../core/componenets/dynamic-form/dynamic-form.component';
 import { RouterModule } from '@angular/router';
 import { NzCardComponent } from 'ng-zorro-antd/card';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { AuthService } from '../Services/authService/auth.service';
 import { FormField } from '../../core/interfaces/DynamicFields';
 import { RegisterModel } from '../login/interfaces/registerMode';
 import { emailExistsValidatorFactory } from '../../core/validators/emailExistsValidatorFactory';
-import { confirmPasswordValidator } from '../../core/validators/PasswordValidator';
+import { RegisterResponse } from '../Common/Models/RegisterResponse';
 
 @Component({
   selector: 'app-register',
@@ -24,13 +24,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   private readonly message = inject(NzMessageService);
   registerForm!: FormGroup;
+  registerUserResponse: any;
 
   constructor(public _fb: FormBuilder, public _authService: AuthService) { }
-
-
-  get f() {
-    return this.registerForm.controls
-  }
 
   ngOnDestroy() {
 
@@ -86,13 +82,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
         email: true,
         minLength: 5,
         maxLength: 512,
-        pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}$'
+        pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}$',
+        isServerSideCheck: true
       },
       errorMessages: [ 
         { require: 'Email is required' },
         { minLength: 'Min 5 character' },
         { maxLength: 'Max 512 character' },
-        { email: 'Email does not exists' },
+        { emailExists: 'Email already exists' },
         { pattern: 'Invalid email' }
        ]
     },
@@ -109,7 +106,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         maxLength: 512
       },
       errorMessages: [ 
-        { require: 'Password is required' },
+        { required: 'Password is required' },
         { minLength: 'Min 8 character' },
         { maxLength: 'Max 512 character' },
         { email: 'Invalid password' }
@@ -126,13 +123,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
         minLength: 8,
         password: true,
         maxLength: 512,
-        customValidator: confirmPasswordValidator(this.registerForm?.controls?.['password']?.value, this.registerForm?.controls?.['confirmPassword']?.value)
+        parentControl: { "controlName": "password" }
       },
       errorMessages: [ 
-        { require: 'Password is required' },
+        { required: 'Password is required' },
         { minLength: 'Min 8 character' },
         { maxLength: 'Max 512 character' },
-        { password: 'Invalid password' }
+        { password: 'Invalid password' },
+        { parentControl: 'Password and confirm password should be match' }
        ]
     },
     {
@@ -161,6 +159,18 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   onRegister() {
+    if(this.registerForm.invalid || this.registerForm.get('password')?.value !== this.registerForm.get('confirmPassword')?.value) return;
+    let raw = {
+      
+    }
 
+    this._authService.register(raw).subscribe({
+      next: (data: RegisterResponse) => {
+        this.registerUserResponse = data;
+      },
+      error: (error: any) => {
+        console.log(error);
+      }
+    })
   }
 }

@@ -1,6 +1,6 @@
 import { toLabel } from './../../Helper/Helper';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { Component, computed, effect, EnvironmentInjector, EventEmitter, Input, OnChanges, OnInit, Output, runInInjectionContext, Signal, signal, SimpleChanges } from '@angular/core';
+import { AsyncValidator, AsyncValidatorFn, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { NzFormItemComponent } from 'ng-zorro-antd/form';
 import { NzFormLabelComponent } from 'ng-zorro-antd/form';
 import { NzFormControlComponent } from 'ng-zorro-antd/form';
@@ -17,6 +17,10 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { ControlErrorMessageComponent } from "../control-error-message/control-error-message.component";
 import { ValidationRules } from '../../interfaces/DynamicFields';
 import { NzCheckboxComponent } from 'ng-zorro-antd/checkbox';
+import { matchOtherValidator, passwordStartWithOtherValidator } from '../../validators/PasswordValidator';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { emailExistsValidatorFactory } from '../../validators/emailExistsValidatorFactory';
+import { AuthService } from '../../../features/Services/authService/auth.service';
 
 
 @Component({
@@ -37,27 +41,64 @@ import { NzCheckboxComponent } from 'ng-zorro-antd/checkbox';
     NzRadioModule,
     ControlErrorMessageComponent,
     NzCheckboxComponent
-],
+  ],
   templateUrl: './dynamic-form.component.html',
   styleUrl: './dynamic-form.component.css',
   standalone: true,
 })
-export class DynamicFormComponent implements OnInit {
+export class DynamicFormComponent implements OnChanges {
 
   @Input() formGroup!: FormGroup;
   @Input() formFields: any;
   @Input() submitLabel: string = 'Submit';
   @Output() onSubmit = new EventEmitter<FormGroup>();
+  @Output() formStatusChanged = new EventEmitter<boolean>();
 
-  constructor(public _fb: FormBuilder) { }
+  formValueSignal!: Signal<any>;
+  formValidSignal!: Signal<boolean>;
+  controlErrorsSignalMap: { [key: string]: Signal<any> } = {};
 
-  ngOnInit() {
-    const group: { [key: string]: FormControl } = {};
+  constructor(public _fb: FormBuilder, private injector: EnvironmentInjector,
+    private _authService: AuthService
+  ) { }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['formFields'] || changes['formGroup']) {
+      this.generateForm();
+      this.setupSignals();
+    }
+  }
+
+  setupSignals() {
+    runInInjectionContext(this.injector, () => {
+      this.formValueSignal = toSignal(this.formGroup.valueChanges, {
+        initialValue: this.formGroup.value,
+      });
   
+      this.formValidSignal = computed(() => this.formGroup.valid);
+  
+      effect(() => {
+        this.formStatusChanged.emit(this.formValidSignal());
+      });
+  
+      for (const key of Object.keys(this.formGroup.controls)) {
+        const control = this.formGroup.get(key)!;
+        this.controlErrorsSignalMap[key] = computed(() => {
+          if (!control.touched && !control.dirty) return null;
+          return control.errors;
+        });
+      }
+    });
+  }
+
+  generateForm() {
+    const group: { [key: string]: FormControl } = {};
+
     for (const field of this.formFields) {
       const validators: ValidatorFn[] = [];
+      const asyncValidators: AsyncValidatorFn[] = [];
       const rules: ValidationRules = field.validations || {};
-  
+
       if (rules.required) validators.push(Validators.required);
       if (rules.min !== undefined) validators.push(Validators.min(rules.min));
       if (rules.max !== undefined) validators.push(Validators.max(rules.max));
@@ -66,17 +107,31 @@ export class DynamicFormComponent implements OnInit {
       if (rules.pattern) validators.push(Validators.pattern(rules.pattern));
       if (rules.email) validators.push(Validators.email);
       if (rules.customValidator) validators.push(rules.customValidator);
-   
-      group[field.name as string] = this._fb.control(
-        { value: this.formGroup.get(field.name)?.value ?? null, disabled: field.disabled ?? false }, 
-        validators
-      );
+      if(rules.parentControl?.controlName) validators.push(matchOtherValidator(rules?.parentControl?.controlName));
 
-      this.formGroup.addControl(field.name, group);
+      if (rules.isServerSideCheck) {
+        asyncValidators.push(emailExistsValidatorFactory(this._authService));
+      }
+
+      group[field.name] = this._fb.control({
+        value: this.formGroup.get(field.name)?.value, disabled: field.disabled ?? false
+      },
+      {
+        validators,
+        asyncValidators,
+        updateOn: 'blur'
+      }
+      );
+      
     }
+    this.formGroup = this._fb.group(group);
   }
 
   callSubmit() {
+    if (this.formGroup.invalid) {
+      this.formGroup.markAllAsTouched();
+      return;
+    }
     this.onSubmit.emit(this.formGroup);
   }
 
@@ -87,5 +142,5 @@ export class DynamicFormComponent implements OnInit {
   // togglePasswordVisibility(fieldName: string): void {
   //   this.passwordVisibility[fieldName] = !this.passwordVisibility[fieldName];
   // }
-  
+
 }
