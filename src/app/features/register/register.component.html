@@ -4,7 +4,7 @@
       
           <app-dynamic-form 
             [formGroup]="registerForm" 
-            (onSubmit)="onRegister()" 
+            (onSubmit)="onRegister($event)" 
             [formFields]="formFields" 
             [submitLabel]="'Register'" />          
       

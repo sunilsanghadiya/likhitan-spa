@@ -4,5 +4,5 @@ export interface RegisterModel {
     email: string;
     password: string
     confirmPassword: string,
-    isTeamsAndConditionsAccept: boolean
+    isTeamsAndConditionAccepted: boolean
 }

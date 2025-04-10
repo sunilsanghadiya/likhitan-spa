@@ -127,12 +127,13 @@ export class DynamicFormComponent implements OnChanges {
     this.formGroup = this._fb.group(group);
   }
 
-  callSubmit() {
+  callSubmit(event: any) {
+    event = this.formGroup
     if (this.formGroup.invalid) {
       this.formGroup.markAllAsTouched();
       return;
     }
-    this.onSubmit.emit(this.formGroup);
+    this.onSubmit.emit(event);
   }
 
   isPassword(field: any): boolean {
