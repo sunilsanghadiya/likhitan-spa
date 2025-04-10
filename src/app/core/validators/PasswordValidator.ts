@@ -6,19 +6,27 @@ export function minLengthValidator(min: number = 8): ValidatorFn {
       return control.value.length < min ? { minLength: { requiredLength: min } } : null;
     };
   }
-
-  export function confirmPasswordValidator(passwordField: string, confirmPasswordField: string): ValidatorFn {
-    return (formGroup: AbstractControl): ValidationErrors | null => {
-      const password = formGroup.get(passwordField)?.value;
-      const confirmPassword = formGroup.get(confirmPasswordField)?.value;
   
-      if (password !== confirmPassword) {
-        formGroup.get(confirmPasswordField)?.setErrors({ passwordMismatch: true });
-        return { passwordMismatch: true };
-      } else {
-        formGroup.get(confirmPasswordField)?.setErrors(null);
-        return null;
-      }
+  export function matchOtherValidator(otherControlName: string): ValidatorFn {
+    return (control: AbstractControl) => {
+      if (!control?.parent) return null;
+  
+      const otherControl = control.parent.get(otherControlName);
+      if (!otherControl) return null;
+  
+      return control.value === otherControl.value ? null : { parentControl: true };
+    };
+  }
+
+  export function passwordStartWithOtherValidator(passwordControlName: string, otherControlName: string): ValidatorFn {
+    return (control: AbstractControl) => {
+      if (!passwordControlName) return null;
+  
+      const otherControl = control.get(otherControlName);
+      const passwordControl = control.get(passwordControlName)?.value;
+      if (!otherControl) return null;
+  
+      return passwordControl.startsWith(otherControl.value) ? null : { isValueStartWithParentControl: true };
     };
   }
   
