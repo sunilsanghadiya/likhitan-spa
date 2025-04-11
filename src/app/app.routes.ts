@@ -3,6 +3,7 @@ import { HomePageLayoutComponent } from './shared/components/home-page-layout/ho
 import { LoginComponent } from './features/login/login.component';
 import { RegisterComponent } from './features/register/register.component';
 import { AuthGuard } from './core/guards/auth/auth.guard';
+import { OtpComponent } from './features/otp/otp.component';
 
 export const routes: Routes = [
     {
@@ -17,6 +18,10 @@ export const routes: Routes = [
     {
         path: 'register',
         component: RegisterComponent
+    },
+    {
+        path: 'sendotp',
+        component: OtpComponent
     },
     {
         path: '**',

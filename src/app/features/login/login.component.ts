@@ -1,3 +1,4 @@
+import { CookieOptions, SameSite } from './../../../../node_modules/ngx-cookie-service/lib/cookie.service.d';
 import { LoginModel } from './interfaces/loginModel';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { NzFlexModule } from 'ng-zorro-antd/flex';

@@ -1,6 +1,6 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { DynamicFormComponent } from '../../core/componenets/dynamic-form/dynamic-form.component';
-import { Route, Router, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NzCardComponent } from 'ng-zorro-antd/card';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -9,6 +9,7 @@ import { FormField } from '../../core/interfaces/DynamicFields';
 import { RegisterModel } from '../login/interfaces/registerMode';
 import { emailExistsValidatorFactory } from '../../core/validators/emailExistsValidatorFactory';
 import { RegisterResponse } from '../Common/Models/RegisterResponse';
+import { DataStoreService } from '../../core/services/dataStoreService/data-store.service';
 
 @Component({
   selector: 'app-register',
@@ -22,11 +23,12 @@ import { RegisterResponse } from '../Common/Models/RegisterResponse';
 })
 export class RegisterComponent implements OnInit, OnDestroy {
 
-  private readonly message = inject(NzMessageService);
   registerForm!: FormGroup;
   registerUserResponse: any;
 
-  constructor(public _fb: FormBuilder, public _authService: AuthService, public _route: Router) { }
+  constructor(public _fb: FormBuilder, public _authService: AuthService, public _route: Router,
+    public _dataStoreService: DataStoreService<any>
+  ) { }
 
   ngOnDestroy() {
 
@@ -175,7 +177,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this._authService.register(raw).subscribe({
       next: (data: RegisterResponse) => {
         this.registerUserResponse = data;
-        this._route.navigate(['/home'])
+        this._dataStoreService.initialize();
+        this._dataStoreService.setData(this.registerUserResponse);
+        this._route.navigate(['/sendotp']);
       },
       error: (error: any) => {
         console.log(error);

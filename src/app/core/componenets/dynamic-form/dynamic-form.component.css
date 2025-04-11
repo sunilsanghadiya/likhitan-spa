@@ -20,3 +20,6 @@
     @apply mt-6;
   }
   
+  .submitBtn {
+    padding-top: 2rem;
+  }

@@ -1,21 +1,22 @@
-import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { NzSpinComponent } from 'ng-zorro-antd/spin';
 import { LoadingService } from '../../services/loadingService/loading.service';
+import { NzSpinComponent } from 'ng-zorro-antd/spin';
 
 @Component({
   selector: 'app-loading-spinner',
   imports: [
-    NzSpinComponent,
-    AsyncPipe
+    NzSpinComponent
   ],
-  template: `@if(loadingService.loading$ | async) {
-    <nz-spin [nzSpinning]="true" nzTip="Loading..." class="fullscreen-spinner"></nz-spin>
+  template: `@if(loadingService.isLoading()) {
+    <div class="loader-overlay">
+      <nz-spin nzSimple nzSize="small"></nz-spin>
+    </div>
   }`,
   styleUrl: './loading-spinner.component.css',
   standalone: true
 })
 export class LoadingSpinnerComponent {
 
-  constructor(public loadingService: LoadingService) { }
+  constructor(public loadingService: LoadingService) {
+  }
 }
