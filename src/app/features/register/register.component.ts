@@ -1,14 +1,15 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { DynamicFormComponent } from '../../core/componenets/dynamic-form/dynamic-form.component';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NzCardComponent } from 'ng-zorro-antd/card';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { AuthService } from '../Services/authService/auth.service';
 import { FormField } from '../../core/interfaces/DynamicFields';
 import { RegisterModel } from '../login/interfaces/registerMode';
 import { emailExistsValidatorFactory } from '../../core/validators/emailExistsValidatorFactory';
 import { RegisterResponse } from '../Common/Models/RegisterResponse';
+import { DataStoreService } from '../../core/services/dataStoreService/data-store.service';
 
 @Component({
   selector: 'app-register',
@@ -22,11 +23,12 @@ import { RegisterResponse } from '../Common/Models/RegisterResponse';
 })
 export class RegisterComponent implements OnInit, OnDestroy {
 
-  private readonly message = inject(NzMessageService);
   registerForm!: FormGroup;
   registerUserResponse: any;
 
-  constructor(public _fb: FormBuilder, public _authService: AuthService) { }
+  constructor(public _fb: FormBuilder, public _authService: AuthService, public _route: Router,
+    public _dataStoreService: DataStoreService<any>
+  ) { }
 
   ngOnDestroy() {
 
@@ -137,7 +139,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     },
     {
       type: 'checkbox',
-      name: 'isTeamsAndConditionsAccept',
+      name: 'isTeamsAndConditionAccepted',
       label: 'Teams and conditions',
       hidden: true,
       validations: {
@@ -156,19 +158,28 @@ export class RegisterComponent implements OnInit, OnDestroy {
       email: ['', { asyncValidators: [emailExistsValidatorFactory(this._authService)] }],
       password: [''],
       confirmPassword: [''],
-      isTeamsAndConditionsAccept: [false]
+      isTeamsAndConditionAccepted: [false]
     })
   }
 
-  onRegister() {
-    if(this.registerForm.invalid || this.registerForm.get('password')?.value !== this.registerForm.get('confirmPassword')?.value) return;
+  onRegister(event: any) {
+    if(event.invalid || this.registerForm.get('password')?.value !== this.registerForm.get('confirmPassword')?.value) return;
     let raw = {
-      
+      id: 0,
+      firstname: event.controls['firstName']?.value,
+      lastname: event.controls['lastName']?.value,
+      email: event.controls["email"]?.value,
+      password: event.controls['password']?.value,
+      confirmPassword: event.controls['confirmPassword']?.value,
+      isTeamsAndConditionAccepted: event.controls['isTeamsAndConditionAccepted'].value
     }
 
     this._authService.register(raw).subscribe({
       next: (data: RegisterResponse) => {
         this.registerUserResponse = data;
+        this._dataStoreService.initialize();
+        this._dataStoreService.setData(this.registerUserResponse);
+        this._route.navigate(['/sendotp']);
       },
       error: (error: any) => {
         console.log(error);

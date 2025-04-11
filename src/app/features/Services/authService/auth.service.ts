@@ -5,6 +5,8 @@ import { LoginModel } from '../../login/interfaces/loginModel';
 import { ApiEndpoint } from '../../Common/ApiEndpoints/ApiEndpoint';
 import { LoginResponse } from '../../Common/Models/LoginDto';
 import { RegisterResponse } from '../../Common/Models/RegisterResponse';
+import { RefreshTokenResponse } from '../../Common/Models/RefreshTokenResponse';
+import { SendOTPResponse } from '../../Common/Models/SendOTPResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +24,14 @@ export class AuthService  {
   }
 
   register(body: any = {}): Observable<RegisterResponse> {
-    return this._api.post(ApiEndpoint.Login, body);
+    return this._api.post(ApiEndpoint.Register, body);
+  }
+
+  refreshToken(body: any = {}): Observable<RefreshTokenResponse> {
+    return this._api.post(ApiEndpoint.RefreshToken, body)
+  }
+
+  sendOtp(body: any = {}): Observable<SendOTPResponse> {
+    return this._api.post(ApiEndpoint.SendOTP, body);
   }
 }
