@@ -1,3 +1,4 @@
+import { CookieOptions, SameSite } from './../../../../node_modules/ngx-cookie-service/lib/cookie.service.d';
 import { LoginModel } from './interfaces/loginModel';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { NzFlexModule } from 'ng-zorro-antd/flex';
@@ -19,8 +20,9 @@ import { FormField } from '../../core/interfaces/DynamicFields';
 import { AuthService } from '../Services/authService/auth.service';
 import { emailExistsValidatorFactory } from '../../core/validators/emailExistsValidatorFactory';
 import { NzTypographyComponent } from 'ng-zorro-antd/typography';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { LoginResponse } from '../Common/Models/LoginDto';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-login',
@@ -44,7 +46,10 @@ import { LoginResponse } from '../Common/Models/LoginDto';
     RouterModule
   ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrl: './login.component.css',
+  providers: [
+    CookieService
+  ]
 })
 export class LoginComponent implements OnInit, OnDestroy {
 
@@ -52,7 +57,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   loginForm!: FormGroup;
   loginData!: LoginResponse;
 
-  constructor(public _fb: FormBuilder, public _authService: AuthService) { }
+  constructor(public _fb: FormBuilder, public _authService: AuthService, public _router: Router, private _cookieService: CookieService) { }
 
   ngOnDestroy() {
   }
@@ -90,14 +95,14 @@ export class LoginComponent implements OnInit, OnDestroy {
       validations: {
         required: true,
         minLength: 8,
-        password: true,
+        // password: true,
         maxLength: 512
       },
       errorMessages: [
         { require: 'Password is required' },
         { minLength: 'Min 8 character' },
         { maxLength: 'Max 512 character' },
-        { email: 'Invalid password' }
+        // { password: 'Invalid password' }
       ]
     }
   ]
@@ -113,21 +118,26 @@ export class LoginComponent implements OnInit, OnDestroy {
     })
   }
 
-  onLogin() {
+  onLogin(event: any) {
     if (this.loginForm.invalid) return;
 
     let raw = {
-      email: this.loginForm.controls["email"]?.value,
-      password: this.loginForm.controls["password"]?.value
+      email: event.controls['email']?.value,
+      password: event.controls['password']?.value
     }
 
-    const sink = this._authService.login(raw).subscribe({
+    this._authService.login(raw).subscribe({
       next: (data: LoginResponse) => {
         this.loginData = data;
+        this._cookieService.set("AccessToken", this.loginData.data.accessToken);
+        this._cookieService.set("RefreshToken", this.loginData.data.refreshToken);
+        
+        if (this.loginData.data.accessToken) {
+          this._router.navigate(['/home'])
+        }
       },
       error: (error: any) => {
         console.log(error);
-        sink.unsubscribe()
       }
     })
   }

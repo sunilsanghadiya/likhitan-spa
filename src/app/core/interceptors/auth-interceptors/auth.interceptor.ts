@@ -1,25 +1,28 @@
-import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { HttpRequest, HttpEvent, HttpErrorResponse, HttpHandlerFn } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, finalize } from 'rxjs/operators';
+import { CookieService } from 'ngx-cookie-service';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = localStorage.getItem('AccessToken');
-    let headers = req.headers.set('Content-Type', 'application/json');
 
-    if (token) {
-      headers = headers.set('Authorization', `Bearer ${token}`);
-    }
+export function AuthInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
+  const cookieService = inject(CookieService);
 
-    const authReq = req.clone({ headers });
+  const token = cookieService.get('AccessToken');
 
-    return next.handle(authReq).pipe(
-      catchError((error: HttpErrorResponse) => {
-        console.error('HTTP Error:', error);
-        return throwError(() => error);
-      })
-    );
+  let headers = req.headers.set('Content-Type', 'application/json');
+  headers = req.headers.set('Accept', 'text/plain');
+  if (token) {
+    headers = headers.set('Authorization', `Bearer ${token}`);
   }
+  const authReq = req.clone({ headers });
+
+  return next(authReq).pipe(
+    catchError((error: HttpErrorResponse) => {
+      console.error('HTTP Error:', error);
+      return throwError(() => error);
+    }),
+    finalize(() => {
+    })
+  );
 }

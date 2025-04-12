@@ -1,9 +1,11 @@
-<form [formGroup]="formGroup" (ngSubmit)="callSubmit()" nz-form [nzLayout]="'vertical'">
+<form [formGroup]="formGroup" (ngSubmit)="callSubmit($event)"  nz-form [nzLayout]="'vertical'">
   @for(field of formFields; track $index) {
     <ng-container>
       <nz-form-item nz-form-item>
         <nz-form-label nz-form-label>
-          <label [for]="field.name" *ngIf="!field.hidden">{{ field.label }}</label>
+          @if(!field.hidden) {
+            <label [for]="field.name">{{ field.label }}</label>
+          }
         </nz-form-label>
         <nz-form-control 
           nz-form-control  
@@ -38,14 +40,16 @@
         </nz-form-control>
 
           <ng-template #errorTpl let-control>
-            <ng-container *ngIf="control.invalid && (control.dirty || control.touched)">
-              <app-control-error-message [control]="control" [customMessages]="field.errorMessages" />
-            </ng-container>
+            @if(formGroup.get(field.name)?.invalid && (formGroup.get(field.name)?.dirty || formGroup.get(field.name)?.touched)) {
+              <app-control-error-message [control]="formGroup.get(field.name)!" [customMessages]="field.errorMessages" />
+            }
           </ng-template>
           
       </nz-form-item>
     </ng-container>
   }
 
-  <button nz-button nzType="primary" nzBlock> {{ submitLabel }} </button>
+  <div class="submitBtn">
+    <button nz-button nzType="primary" nzBlock> {{ submitLabel }} </button>
+  </div>
 </form>

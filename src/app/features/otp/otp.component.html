@@ -1,0 +1,13 @@
+<div nz-row>
+    <div nz-col nzSpan="12" nzOffset="6" class="otp-card">
+        <nz-card>
+            <h2 class="title">OTP Verification</h2>
+            <app-dynamic-form [formGroup]="sendOtpForm" (onSubmit)="onSend($event)" [formFields]="formFields"
+                [submitLabel]="'Send OTP'" />
+
+                <div class="getOtpLbl">
+                    <a (click)="getOtp()" >Get OTP</a>
+                </div>
+        </nz-card>
+    </div>
+</div>

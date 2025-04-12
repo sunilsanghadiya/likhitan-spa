@@ -1,6 +1,6 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { DynamicFormComponent } from '../../core/componenets/dynamic-form/dynamic-form.component';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NzCardComponent } from 'ng-zorro-antd/card';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -8,7 +8,8 @@ import { AuthService } from '../Services/authService/auth.service';
 import { FormField } from '../../core/interfaces/DynamicFields';
 import { RegisterModel } from '../login/interfaces/registerMode';
 import { emailExistsValidatorFactory } from '../../core/validators/emailExistsValidatorFactory';
-import { confirmPasswordValidator } from '../../core/validators/PasswordValidator';
+import { RegisterResponse } from '../Common/Models/RegisterResponse';
+import { DataStoreService } from '../../core/services/dataStoreService/data-store.service';
 
 @Component({
   selector: 'app-register',
@@ -22,15 +23,12 @@ import { confirmPasswordValidator } from '../../core/validators/PasswordValidato
 })
 export class RegisterComponent implements OnInit, OnDestroy {
 
-  private readonly message = inject(NzMessageService);
   registerForm!: FormGroup;
+  registerUserResponse: any;
 
-  constructor(public _fb: FormBuilder, public _authService: AuthService) { }
-
-
-  get f() {
-    return this.registerForm.controls
-  }
+  constructor(public _fb: FormBuilder, public _authService: AuthService, public _route: Router,
+    public _dataStoreService: DataStoreService<any>
+  ) { }
 
   ngOnDestroy() {
 
@@ -86,13 +84,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
         email: true,
         minLength: 5,
         maxLength: 512,
-        pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}$'
+        pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}$',
+        isServerSideCheck: true,
       },
       errorMessages: [ 
         { require: 'Email is required' },
         { minLength: 'Min 5 character' },
         { maxLength: 'Max 512 character' },
-        { email: 'Email does not exists' },
+        { emailExists: 'Email already exists' },
         { pattern: 'Invalid email' }
        ]
     },
@@ -106,13 +105,15 @@ export class RegisterComponent implements OnInit, OnDestroy {
         required: true,
         minLength: 8,
         password: true,
-        maxLength: 512
+        maxLength: 512,
+        pattern: `^(?!<username>).*?(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':"\\\\|,.<>\\/?]).{8,}$`
       },
       errorMessages: [ 
-        { require: 'Password is required' },
+        { required: 'Password is required' },
         { minLength: 'Min 8 character' },
         { maxLength: 'Max 512 character' },
-        { email: 'Invalid password' }
+        { password: 'Invalid password' },
+        { pattern: "One uppercase and one lowercase and one number and one special character" }
        ]
     },
     {
@@ -126,18 +127,19 @@ export class RegisterComponent implements OnInit, OnDestroy {
         minLength: 8,
         password: true,
         maxLength: 512,
-        customValidator: confirmPasswordValidator(this.registerForm?.controls?.['password']?.value, this.registerForm?.controls?.['confirmPassword']?.value)
+        parentControl: { "controlName": "password" }
       },
       errorMessages: [ 
-        { require: 'Password is required' },
+        { required: 'Password is required' },
         { minLength: 'Min 8 character' },
         { maxLength: 'Max 512 character' },
-        { password: 'Invalid password' }
+        { password: 'Invalid password' },
+        { parentControl: 'Password and confirm password should be match' }
        ]
     },
     {
       type: 'checkbox',
-      name: 'isTeamsAndConditionsAccept',
+      name: 'isTeamsAndConditionAccepted',
       label: 'Teams and conditions',
       hidden: true,
       validations: {
@@ -156,11 +158,32 @@ export class RegisterComponent implements OnInit, OnDestroy {
       email: ['', { asyncValidators: [emailExistsValidatorFactory(this._authService)] }],
       password: [''],
       confirmPassword: [''],
-      isTeamsAndConditionsAccept: [false]
+      isTeamsAndConditionAccepted: [false]
     })
   }
 
-  onRegister() {
+  onRegister(event: any) {
+    if(event.invalid || this.registerForm.get('password')?.value !== this.registerForm.get('confirmPassword')?.value) return;
+    let raw = {
+      id: 0,
+      firstname: event.controls['firstName']?.value,
+      lastname: event.controls['lastName']?.value,
+      email: event.controls["email"]?.value,
+      password: event.controls['password']?.value,
+      confirmPassword: event.controls['confirmPassword']?.value,
+      isTeamsAndConditionAccepted: event.controls['isTeamsAndConditionAccepted'].value
+    }
 
+    this._authService.register(raw).subscribe({
+      next: (data: RegisterResponse) => {
+        this.registerUserResponse = data;
+        this._dataStoreService.initialize();
+        this._dataStoreService.setData(this.registerUserResponse);
+        this._route.navigate(['/sendotp']);
+      },
+      error: (error: any) => {
+        console.log(error);
+      }
+    })
   }
 }

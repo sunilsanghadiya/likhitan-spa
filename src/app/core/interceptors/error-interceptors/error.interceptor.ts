@@ -1,30 +1,29 @@
-import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { HttpRequest, HttpEvent, HttpErrorResponse, HttpHandlerFn } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { LoadingService } from '../../services/loadingService/loading.service';
 
-@Injectable()
-export class ErrorInterceptor implements HttpInterceptor {
-  constructor(private router: Router) {}
+export function ErrorInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
+  const router = inject(Router);
+  const loader = inject(LoadingService)
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return next.handle(req).pipe(
-      catchError((error: HttpErrorResponse) => {
-        let errorMessage = 'An unknown error occurred!';
-        
-        if (error.status === 401) {
-          errorMessage = 'Unauthorized! Redirecting to login.';
-          this.router.navigate(['/login']);
-        } else if (error.status === 403) {
-          errorMessage = 'Access Denied!';
-        } else if (error.error?.message) {
-          errorMessage = error.error.message;
-        }
+  return next(req).pipe(
+    catchError((error: HttpErrorResponse) => {
+      loader.hide(false);
+      let errorMessage = 'An unknown error occurred!';
 
-        console.error('Error:', errorMessage);
-        return throwError(() => errorMessage);
-      })
-    );
-  }
+      if (error.status === 401) {
+        errorMessage = 'Unauthorized! Redirecting to login.';
+        router.navigate(['/login']);
+      } else if (error.status === 403) {
+        errorMessage = 'Access Denied!';
+      } else if (error.error?.message) {
+        errorMessage = error.error.message;
+      }
+      console.error('Error:', errorMessage);
+      return throwError(() => errorMessage);
+    })
+  );
 }
