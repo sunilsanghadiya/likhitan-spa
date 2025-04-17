@@ -9,9 +9,11 @@ import { RefreshTokenInterceptor } from './core/interceptors/refreshToken-interc
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { LoggingInterceptor } from './core/interceptors/loaderInterceptor/loader.interceptor';
+import { AuthGuard } from './core/guards/auth/auth.guard';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    AuthGuard,
     provideZoneChangeDetection({ eventCoalescing: true }), 
     provideRouter(routes), 
     provideClientHydration(withEventReplay(), withHttpTransferCacheOptions({

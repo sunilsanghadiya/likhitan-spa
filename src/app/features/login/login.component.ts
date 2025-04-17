@@ -129,10 +129,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this._authService.login(raw).subscribe({
       next: (data: LoginResponse) => {
         this.loginData = data;
-        this._cookieService.set("AccessToken", this.loginData.data.accessToken);
-        this._cookieService.set("RefreshToken", this.loginData.data.refreshToken);
-        
-        if (this.loginData.data.accessToken) {
+        if(this.loginData.data.accessToken) {
           this._router.navigate(['/home'])
         }
       },

@@ -4,5 +4,6 @@ export const ApiEndpoint = {
     Login: '/auth/login',
     Register: '/auth/register',
     RefreshToken: '/auth/refreshToken',
-    SendOTP: '/auth/sendOTP'
+    SendOTP: '/auth/sendOTP',
+    ForgotPassword: '/auth/forgotPassword'
 }

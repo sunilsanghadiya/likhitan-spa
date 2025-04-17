@@ -7,6 +7,7 @@ import { LoginResponse } from '../../Common/Models/LoginDto';
 import { RegisterResponse } from '../../Common/Models/RegisterResponse';
 import { RefreshTokenResponse } from '../../Common/Models/RefreshTokenResponse';
 import { SendOTPResponse } from '../../Common/Models/SendOTPResponse';
+import { ForgotPasswordResponse } from '../../Common/Models/ForgotPasswordResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -33,5 +34,9 @@ export class AuthService  {
 
   sendOtp(body: any = {}): Observable<SendOTPResponse> {
     return this._api.post(ApiEndpoint.SendOTP, body);
+  }
+
+  forgotPassWord(body: any = {}): Observable<ForgotPasswordResponse> {
+    return this._api.post(ApiEndpoint.ForgotPassword, body);
   }
 }
