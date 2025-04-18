@@ -1,6 +1,5 @@
-import { toLabel } from './../../Helper/Helper';
-import { Component, computed, effect, EnvironmentInjector, EventEmitter, Input, OnChanges, OnInit, Output, runInInjectionContext, Signal, signal, SimpleChanges } from '@angular/core';
-import { AsyncValidator, AsyncValidatorFn, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { Component, computed, effect, EnvironmentInjector, EventEmitter, Input, OnChanges, Output, runInInjectionContext, Signal, SimpleChanges } from '@angular/core';
+import { AsyncValidatorFn, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { NzFormItemComponent } from 'ng-zorro-antd/form';
 import { NzFormLabelComponent } from 'ng-zorro-antd/form';
 import { NzFormControlComponent } from 'ng-zorro-antd/form';
@@ -17,10 +16,12 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { ControlErrorMessageComponent } from "../control-error-message/control-error-message.component";
 import { ValidationRules } from '../../interfaces/DynamicFields';
 import { NzCheckboxComponent } from 'ng-zorro-antd/checkbox';
-import { matchOtherValidator, passwordStartWithOtherValidator } from '../../validators/PasswordValidator';
+import { matchOtherValidator } from '../../validators/PasswordValidator';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { emailExistsValidatorFactory } from '../../validators/emailExistsValidatorFactory';
 import { AuthService } from '../../../features/Services/authService/auth.service';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { enableControlWhenParentValid } from '../../validators/enableControlWhenParentValid';
 
 
 @Component({
@@ -40,7 +41,8 @@ import { AuthService } from '../../../features/Services/authService/auth.service
     CommonModule,
     NzRadioModule,
     ControlErrorMessageComponent,
-    NzCheckboxComponent
+    NzCheckboxComponent,
+    NzToolTipModule
   ],
   templateUrl: './dynamic-form.component.html',
   styleUrl: './dynamic-form.component.css',
@@ -110,7 +112,7 @@ export class DynamicFormComponent implements OnChanges {
       if(rules.parentControl?.controlName) validators.push(matchOtherValidator(rules?.parentControl?.controlName));
 
       if (rules.isServerSideCheck) {
-        asyncValidators.push(emailExistsValidatorFactory(this._authService));
+        asyncValidators.push(emailExistsValidatorFactory(this._authService, rules.isFieldValid));
       }
 
       group[field.name] = this._fb.control({

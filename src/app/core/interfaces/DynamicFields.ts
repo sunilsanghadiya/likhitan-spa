@@ -13,6 +13,7 @@ export interface BaseField<T> {
   hidden?: boolean;
   disabled?: boolean;
   errorMessages?: any[];
+  tooltip?: string
 }
 
 
@@ -43,4 +44,5 @@ export interface ValidationRules {
   parentControl?: any;
   isServerSideCheck?: boolean;
   isValueStartWithParentControl?: boolean;
+  isFieldValid?: boolean
 }

@@ -86,6 +86,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         maxLength: 512,
         pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}$',
         isServerSideCheck: true,
+        isFieldValid: false
       },
       errorMessages: [ 
         { require: 'Email is required' },

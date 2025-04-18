@@ -9,8 +9,9 @@ import { Router } from '@angular/router';
 import { AuthService } from '../Services/authService/auth.service';
 import { DataStoreService } from '../../core/services/dataStoreService/data-store.service';
 import { SendOTPResponse } from '../Common/Models/SendOTPResponse';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzNotificationPlacement, NzNotificationService } from 'ng-zorro-antd/notification';
+import { NzNotificationPlacement } from 'ng-zorro-antd/notification';
+import { CookieService } from 'ngx-cookie-service';
+import { NotificationService } from '../../core/services/nzNotification/nz-notification.service';
 
 @Component({
   selector: 'app-otp',
@@ -26,10 +27,9 @@ export class OtpComponent implements OnInit {
 
   sendOtpForm!: FormGroup;
   otpResponse: any;
-  private readonly notification = inject(NzNotificationService);
 
   constructor(public _fb: FormBuilder, public _router: Router, public _authService: AuthService,
-    public _dataStoreService: DataStoreService<any>
+    public _dataStoreService: DataStoreService<any>, public _cookieService: CookieService, public _notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -54,9 +54,14 @@ export class OtpComponent implements OnInit {
 
     this._authService.sendOtp(payload).subscribe({
       next: (response: SendOTPResponse) => {
-        if(response.IsOtpSend) {
-          this.createNotification('topRight');
+        if(response.data.isOtpSend === true) {
+          this._notificationService.successNotification('OTP Verification', 'Your OTP is successfully verified.');
           this._router.navigate(['/home']);
+        }
+        else {
+          this._router.navigate(['/sendotp']);
+          this._notificationService.failedNotification('OTP Verification', 'OTP verification failed get new otp and try again.');
+          event.reset();
         }
       },
       error: (error: any) => {
@@ -89,11 +94,4 @@ export class OtpComponent implements OnInit {
     // this._authService.
   }
 
-  createNotification(position: NzNotificationPlacement): void {
-    this.notification.blank(
-      'OTP Verification',
-      'Your OTP is successfully verified.',
-      { nzPlacement: position }
-    );
-  }
 }

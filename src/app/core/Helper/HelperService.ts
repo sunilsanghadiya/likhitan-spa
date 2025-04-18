@@ -12,7 +12,7 @@ export class HelperService {
     constructor(private _cookieService: CookieService) { }
 
     isLoggedIn(): boolean {
-        const token = this._cookieService.get("AccessToken");
+        const token = this._cookieService.get('AccessToken');
         if (!token) return false;
 
         try {

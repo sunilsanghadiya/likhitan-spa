@@ -16,6 +16,7 @@
           <ng-container [ngSwitch]="field.type">
             <!-- Input -->
             <input 
+              [nz-tooltip]="field.tooltip"
               *ngSwitchCase="'input'" 
               nz-input 
               [formControlName]="field.name" 
@@ -24,17 +25,17 @@
             />
   
             <!-- Select -->
-            <nz-select *ngSwitchCase="'select'" [formControlName]="field.name" [nzPlaceHolder]="field.placeholder">
+            <nz-select *ngSwitchCase="'select'" [nz-tooltip]="field.tooltip" [formControlName]="field.name" [nzPlaceHolder]="field.placeholder">
               <nz-option *ngFor="let opt of field.options" [nzLabel]="opt.label" [nzValue]="opt.value"></nz-option>
             </nz-select>
   
             <!-- Checkbox -->
-            <label *ngSwitchCase="'checkbox'" nz-checkbox [formControlName]="field.name">
+            <label *ngSwitchCase="'checkbox'" [nz-tooltip]="field.tooltip" nz-checkbox [formControlName]="field.name">
               {{ field.label }}
             </label>
   
             <!-- Date Picker -->
-            <nz-date-picker *ngSwitchCase="'date'" [formControlName]="field.name" [nzPlaceHolder]="field.placeholder"></nz-date-picker>
+            <nz-date-picker *ngSwitchCase="'date'" [nz-tooltip]="field.tooltip" [formControlName]="field.name" [nzPlaceHolder]="field.placeholder"></nz-date-picker>
   
           </ng-container>
         </nz-form-control>
