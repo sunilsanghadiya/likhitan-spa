@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-
+import { NzIconModule, NzIconService } from 'ng-zorro-antd/icon';
+import { UserOutline } from '@ant-design/icons-angular/icons';
 
 @Component({
   selector: 'app-home-page-layout',
@@ -20,7 +20,9 @@ export class HomePageLayoutComponent implements OnInit {
 
   searchIcon = '';
 
-  constructor() { }
+  constructor(private iconService: NzIconService) {
+    this.iconService.addIcon(UserOutline);
+   }
 
   ngOnInit() {
 

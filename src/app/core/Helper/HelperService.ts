@@ -1,6 +1,7 @@
+import { HttpClient, HttpContextToken, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { jwtDecode } from 'jwt-decode';
-import { CookieService } from "ngx-cookie-service";
+import { catchError, map, Observable, of, shareReplay } from "rxjs";
+import { AuthService } from "../../features/Services/authService/auth.service";
 
 @Injectable({
     providedIn: 'root'
@@ -9,19 +10,34 @@ export class HelperService {
 
     passwordPattern = new RegExp(`^(?!<username>).*?(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':"\\\\|,.<>\\/?]).{8,}$`);
 
-    constructor(private _cookieService: CookieService) { }
+    constructor(public _authService: AuthService) { }
 
-    isLoggedIn(): boolean {
-        const token = this._cookieService.get('AccessToken');
-        if (!token) return false;
-
-        try {
-            const decoded: any = jwtDecode(token);
-            const currentTime = Math.floor(Date.now() / 1000);
-            return decoded.exp > currentTime;
-        } catch (err) {
-            return false;
-        }
+    IsUserAuthenticated(): Observable<boolean> {
+        return this._authService.checkAuth().pipe(
+          map((res: any) => {
+            return true; // or some logic based on res
+          }),
+          catchError((error: any) => {
+            console.log(error);
+            return of(false);
+          })
+        );
     }
 
+    public mergeHeaders(baseHeaders: HttpHeaders, additionalHeaders: Record<string, string>): HttpHeaders {
+      let headers = baseHeaders;
+  
+      // Add or override headers with the additional ones
+      for (const [key, value] of Object.entries(additionalHeaders)) {
+        if (value !== undefined && value !== null) {
+          headers = headers.set(key, value);
+        }
+      }
+  
+      return headers;
+    }
+
+    public  ADDITIONAL_HEADERS = new HttpContextToken<Record<string, string>>(
+      () => ({})
+    );
 }

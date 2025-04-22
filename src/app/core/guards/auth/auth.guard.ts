@@ -1,7 +1,7 @@
 // auth.guard.ts
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
+import { CanActivate, Router, UrlTree } from '@angular/router';
+import { map, Observable } from 'rxjs';
 import { HelperService } from '../../Helper/HelperService';
 
 @Injectable({
@@ -9,9 +9,13 @@ import { HelperService } from '../../Helper/HelperService';
 })
 export class AuthGuard implements CanActivate {
 
-  constructor(private _helperService: HelperService, public _router: Router) { }
+  constructor(public _helperService: HelperService, private router: Router) { }
 
-  canActivate(route: ActivatedRouteSnapshot): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
-    return this._helperService.isLoggedIn() ? true : this._router.navigate(['/login']);
+  canActivate(): Observable<boolean | UrlTree> {
+    return this._helperService.IsUserAuthenticated().pipe(
+      map((isAuthenticated) => {
+        return isAuthenticated ? true : this.router.createUrlTree(['/login']);
+      })
+    );
   }
 }

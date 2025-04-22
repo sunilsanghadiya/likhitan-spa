@@ -1,28 +1,25 @@
+import { HttpEvent, HttpHandlerFn, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { HttpRequest, HttpEvent, HttpErrorResponse, HttpHandlerFn } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, finalize } from 'rxjs/operators';
-import { CookieService } from 'ngx-cookie-service';
+import { Observable } from 'rxjs';
+import { HelperService } from '../../Helper/HelperService';
 
 
 export function AuthInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
-  const cookieService = inject(CookieService);
 
-  const token = cookieService.get('AccessToken');
+  const _helperService = inject(HelperService);
+  
+  let commonHeaders = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Cache-Control': 'no-cache',
+    'Pragma': 'no-cache'
+  });
 
-  let headers = req.headers.set('Content-Type', 'application/json');
-  headers = req.headers.set('Accept', 'text/plain');
-  if (token) {
-    headers = headers.set('Authorization', `Bearer ${token}`);
-  }
-  const authReq = req.clone({ headers });
-
-  return next(authReq).pipe(
-    catchError((error: HttpErrorResponse) => {
-      console.error('HTTP Error:', error);
-      return throwError(() => error);
-    }),
-    finalize(() => {
-    })
-  );
+  const additionalHeaders = req.context.get(_helperService.ADDITIONAL_HEADERS);
+  const mergedHeaders = _helperService.mergeHeaders(commonHeaders, additionalHeaders);
+  const authReq = req.clone({ headers: mergedHeaders });
+  
+  return next(authReq);
+ 
 }
+
