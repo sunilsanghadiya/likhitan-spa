@@ -71,7 +71,12 @@
               "buildTarget": "likhitan:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "ssl": true,
+            "sslKey": "./localhost+2-key.pem",
+            "sslCert": "./localhost+2.pem"
+          }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n"

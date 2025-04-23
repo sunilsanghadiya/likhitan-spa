@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { ApiService } from '../../../core/services/api/api.service';
 import { Observable } from 'rxjs';
-import { LoginModel } from '../../login/interfaces/loginModel';
+import { ApiService } from '../../../core/services/api/api.service';
 import { ApiEndpoint } from '../../Common/ApiEndpoints/ApiEndpoint';
 import { LoginResponse } from '../../Common/Models/LoginDto';
-import { RegisterResponse } from '../../Common/Models/RegisterResponse';
 import { RefreshTokenResponse } from '../../Common/Models/RefreshTokenResponse';
+import { RegisterResponse } from '../../Common/Models/RegisterResponse';
 import { SendOTPResponse } from '../../Common/Models/SendOTPResponse';
+import { CheckAuthResponse } from '../../Common/Models/CheckAuthResponse';
 import { ForgotPasswordResponse } from '../../Common/Models/ForgotPasswordResponse';
 
 @Injectable({
@@ -34,6 +34,10 @@ export class AuthService  {
 
   sendOtp(body: any = {}): Observable<SendOTPResponse> {
     return this._api.post(ApiEndpoint.SendOTP, body);
+  }
+
+  checkAuth(): Observable<CheckAuthResponse> {
+    return this._api.get(ApiEndpoint.CheckAuth);
   }
 
   forgotPassWord(body: any = {}): Observable<ForgotPasswordResponse> {

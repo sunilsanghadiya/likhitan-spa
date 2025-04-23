@@ -1,9 +1,10 @@
 
 export const ApiEndpoint = {
-    IsEmailExists: '/auth/isEmailExists',
-    Login: '/auth/login',
-    Register: '/auth/register',
-    RefreshToken: '/auth/refreshToken',
-    SendOTP: '/auth/sendOTP',
+    IsEmailExists: '/api/auth/isEmailExists',
+    Login: '/api/auth/login',
+    Register: '/api/auth/register',
+    RefreshToken: '/api/auth/refreshToken',
+    SendOTP: '/api/auth/sendOTP',
+    CheckAuth: '/api/validate/checkAuth',
     ForgotPassword: '/auth/forgotPassword'
 }

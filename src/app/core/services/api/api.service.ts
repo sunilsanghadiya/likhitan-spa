@@ -18,7 +18,7 @@ export class ApiService {
    * @param params Optional query parameters
    */
   get<T>(endpoint: string, params?: any): Observable<T> {
-    return this.http.get<T>(`${this.baseUrl}${endpoint}`, { params: this.buildParams(params) })
+    return this.http.get<T>(`${this.baseUrl}${endpoint}`, { params: this.buildParams(params), withCredentials: true })
       .pipe(catchError(this.handleError));
   }
 

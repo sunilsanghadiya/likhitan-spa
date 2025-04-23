@@ -22,7 +22,7 @@ export function ErrorInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn)
       } else if (error.error?.message) {
         errorMessage = error.error.message;
       }
-      console.error('Error:', errorMessage);
+      console.log('Error:', errorMessage + " " + error.url);
       return throwError(() => errorMessage);
     })
   );

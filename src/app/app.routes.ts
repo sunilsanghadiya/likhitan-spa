@@ -4,12 +4,12 @@ import { LoginComponent } from './features/login/login.component';
 import { RegisterComponent } from './features/register/register.component';
 import { AuthGuard } from './core/guards/auth/auth.guard';
 import { OtpComponent } from './features/otp/otp.component';
-import { ForgotPasswordComponent } from './features/forgot-password/forgot-password.component';
+import { ErrorComponent } from './core/componenets/error/error.component';
 
 export const routes: Routes = [
     {
         path: 'home',
-        loadComponent: () => import('./shared/components/home-page-layout/home-page-layout.component').then(m => m.HomePageLayoutComponent),
+        component: HomePageLayoutComponent,
         canActivate: [AuthGuard]
     },
     {
@@ -24,8 +24,10 @@ export const routes: Routes = [
         path: 'sendotp',
         component: OtpComponent
     },
-    {
-        path: 'forgotpassword',
-        component: ForgotPasswordComponent
+    {   path: 'error', 
+        component: ErrorComponent 
+    },
+    {   path: '**', 
+        redirectTo: 'error' 
     }
 ];
