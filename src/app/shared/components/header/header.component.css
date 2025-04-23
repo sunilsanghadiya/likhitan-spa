@@ -1,0 +1,60 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    background: #FBFBFB;
+    color: rgb(0, 0, 0);
+  }
+  
+  .left-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .logo {
+    height: 40px;
+  }
+  
+  .right-section {
+    display: flex;
+    align-items: center;
+  }
+  
+  .profile-icon {
+    cursor: pointer;
+  }
+
+  .leftSideDetails {
+    justify-content: center;
+    align-content: center;
+  }
+
+  .menuItems {
+    padding: 0.5rem;
+  }
+
+  nz-avatar {
+    transition: all 0.3s;
+    
+    &:hover {
+      box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.2);
+    }
+  }
+  
+  [nz-menu] {
+    width: 200px;
+  }
+
+  .becomeAuthorBtnDiv {
+    padding-right: 3rem;
+  }
+
+nz-header {
+  box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.2);
+}
+
+.searchBarIcon {
+  cursor: pointer;
+}

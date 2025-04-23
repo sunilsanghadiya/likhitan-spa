@@ -1,6 +1,39 @@
-<div class="logo"></div>
-<ul nz-menu nzTheme="dark" nzMode="horizontal">
-    <li nz-menu-item>nav 1</li>
-    <li nz-menu-item>nav 2</li>
-    <li nz-menu-item>nav 3</li>
-</ul>
+<nz-layout>
+    <nz-header class="header" id="headerId">
+        <div class="left-section" id="leftSectionId">
+            <nz-icon nzType="search" nzTheme="outline" class="searchBarIcon" (click)="onSearchClick()" />
+        </div>
+        <div class="middleSection" id="middleSectionId">
+            <h2 id="mainTitleId" nz-typography>Likhitan</h2>
+        </div>
+        <div class="right-section" id="rightSectionId">
+            <div class="becomeAuthorBtnDiv">
+                <button  nz-button nzType="primary" nzBlock id="becomeAuthorId" class="becomeAuthorBtn">Become author</button>
+            </div>
+
+            <div nz-dropdown [nzDropdownMenu]="menu" nzTrigger="hover" nzPlacement="topRight">
+                <nz-avatar nzSize="large" nzIcon="user" [nzSrc]="userAvatarUrl"
+                    style="cursor: pointer;">
+                </nz-avatar>
+            </div>
+
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu class="menuItems">
+                    <li nz-menu-item (click)="onProfileClick()">
+                        <span nz-icon nzType="user" style="padding-right: 0.5rem;"></span>
+                        <span>Profile</span>
+                    </li>
+                    <li nz-menu-item (click)="onSettingsClick()">
+                        <span nz-icon nzType="setting" style="padding-right: 0.5rem;"></span>
+                        <span>Settings</span>
+                    </li>
+                    <li nz-menu-divider></li>
+                    <li nz-menu-item (click)="onLogoutClick()" nzDanger>
+                        <span nz-icon nzType="logout" style="padding-right: 0.5rem;"></span>
+                        <span>Logout</span>
+                    </li>
+                </ul>
+            </nz-dropdown-menu>
+        </div>
+    </nz-header>
+</nz-layout>

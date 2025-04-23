@@ -4,15 +4,17 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzIconModule, NzIconService } from 'ng-zorro-antd/icon';
 import { UserOutline } from '@ant-design/icons-angular/icons';
+import { HeaderComponent } from "../header/header.component";
 
 @Component({
   selector: 'app-home-page-layout',
   imports: [
-    NzLayoutModule, 
-    NzAvatarModule, 
+    NzLayoutModule,
+    NzAvatarModule,
     NzInputModule,
-    NzIconModule
-  ],
+    NzIconModule,
+    HeaderComponent
+],
   templateUrl: './home-page-layout.component.html',
   styleUrl: './home-page-layout.component.css'
 })
