@@ -21,6 +21,7 @@ import { emailExistsValidatorFactory } from '../../core/validators/emailExistsVa
 import { LoginResponse } from '../Common/Models/LoginDto';
 import { AuthService } from '../Services/authService/auth.service';
 import { LoginModel } from './interfaces/loginModel';
+import { UserRoles } from '../../core/enums/UserRoles';
 
 @Component({
   selector: 'app-login',
@@ -56,12 +57,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   formFields: any;
 
   constructor(public _fb: FormBuilder, public _authService: AuthService, 
-    public _router: Router,  private route: ActivatedRoute) {
-      this.route.queryParams.subscribe(params => {
-        this.returnUrl = params['/home'] || '/';
-      });
-
-     }
+    public _router: Router,  private route: ActivatedRoute) { }
 
   ngOnDestroy() {
   }
@@ -120,8 +116,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       email: ['', {
         asyncValidators: [emailExistsValidatorFactory(this._authService)],
         updateOn: 'blur'
-      }
-      ],
+      }],
       password: ['']
     })
   }
@@ -137,8 +132,12 @@ export class LoginComponent implements OnInit, OnDestroy {
     this._authService.login(raw).subscribe({
       next: (data: LoginResponse) => {
         this.loginData = data;
-        if (this.loginData.data.accessToken) {
+        if (this.loginData.data.roleId == UserRoles.Standard) {
           this._router.navigate(['/home']);
+        } else if(this.loginData.data.roleId == UserRoles.Author) {
+          this._router.navigate(['/home']);
+        } else if (this.loginData.data.roleId == UserRoles.Admin) {
+          this._router.navigate(['/dashboard']);
         }
       },
       error: (error: any) => {

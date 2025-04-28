@@ -1,12 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
-import { ErrorMessagePipe } from "../../pipes/errorMessage/error-message.pipe";
 
 @Component({
   selector: 'app-control-error-message',
-  imports: [
-    ErrorMessagePipe
-],
+  imports: [ ],
   templateUrl: './control-error-message.component.html',
   styleUrl: './control-error-message.component.css',
   standalone: true

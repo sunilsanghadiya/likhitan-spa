@@ -6,11 +6,17 @@ import { AuthGuard } from './core/guards/auth/auth.guard';
 import { OtpComponent } from './features/otp/otp.component';
 import { ErrorComponent } from './core/componenets/error/error.component';
 import { ForgotPasswordComponent } from './features/forgot-password/forgot-password.component';
+import { DashboardComponent } from './features/dashboard/dashboard.component';
 
 export const routes: Routes = [
     {
         path: 'home',
         component: HomePageLayoutComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'dashboard',
+        component: DashboardComponent,
         canActivate: [AuthGuard]
     },
     {
