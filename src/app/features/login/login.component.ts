@@ -83,11 +83,12 @@ export class LoginComponent implements OnInit, OnDestroy {
         pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}$'
       },
       errorMessages: [
-        { require: 'Email is required' },
-        { minLength: 'Min 5 character' },
-        { maxLength: 'Max 512 character' },
-        { email: 'Email does not exists' },
-        { pattern: 'Invalid email' }
+        { require: 'Email is required.' },
+        { minLength: 'Min 5 character.' },
+        { maxLength: 'Max 512 character.' },
+        { emailExists: 'Email does not exists.' },
+        { pattern: 'Invalid email.' },
+        // { emailDomain: 'Provided email domain does not support' }
       ]
     },
     {
@@ -102,10 +103,9 @@ export class LoginComponent implements OnInit, OnDestroy {
         maxLength: 512
       },
       errorMessages: [
-        { require: 'Password is required' },
-        { minLength: 'Min 8 character' },
-        { maxLength: 'Max 512 character' },
-        // { password: 'Invalid password' }
+        { require: 'Password is required.' },
+        { minLength: 'Min 8 character.' },
+        { maxLength: 'Max 512 character.' }
       ]
     }
   ]
@@ -140,17 +140,5 @@ export class LoginComponent implements OnInit, OnDestroy {
         console.log(error);
       }
     })
-  }
-
-  forgotPassword() {
-
-  }
-
-  register() {
-
-  }
-
-  IsEmailExist() {
-
   }
 }

@@ -13,6 +13,8 @@ import { Router } from '@angular/router';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { ModelService } from '../../../core/services/modelService/model.service';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { AuthService } from '../../../features/Services/authService/auth.service';
+import { LogoutResponse } from '../../../features/Common/Models/LogoutResponse';
 
 @Component({
   selector: 'app-header',
@@ -41,7 +43,7 @@ export class HeaderComponent implements OnInit {
   searchIcon = '';
   userAvatarUrl: string = '';
   
-    constructor(private iconService: NzIconService, public _router: Router, public _modelService: ModelService) {
+    constructor(private iconService: NzIconService, public _router: Router, public _modelService: ModelService, public _authService: AuthService) {
       this.iconService.addIcon(UserOutline, SettingOutline, LogoutOutline);
      }
 
@@ -57,7 +59,17 @@ export class HeaderComponent implements OnInit {
   }
 
   onLogoutClick() {
-    this._router.navigate(['/login']);
+    this._authService.logout().subscribe({
+      next: (response: LogoutResponse) => {
+        if(response.data.isLogout) {
+          this._router.navigate(['/login']);
+        }
+      },
+      error: (error: any) => {
+        console.log(error);
+      },
+      complete: () => {}
+    })
   }
 
   onSearchClick() {
