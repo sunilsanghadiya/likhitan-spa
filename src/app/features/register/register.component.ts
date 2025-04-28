@@ -10,6 +10,7 @@ import { RegisterModel } from '../login/interfaces/registerMode';
 import { emailExistsValidatorFactory } from '../../core/validators/emailExistsValidatorFactory';
 import { RegisterResponse } from '../Common/Models/RegisterResponse';
 import { DataStoreService } from '../../core/services/dataStoreService/data-store.service';
+import { isEmailDomainSupportValidator } from '../../core/validators/isEmailDomainSupportValidator';
 
 @Component({
   selector: 'app-register',
@@ -36,127 +37,136 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.createRegisterForm()
+    this.prepareForm();
   }
 
-  formFields: FormField<RegisterModel>[] = [
-    {
-      type: 'input',
-      name: 'firstName',
-      label: 'Firstname',
-      placeholder: 'Firstname',
-      hidden: false,
-      validations: {
-        required: true,
-        minLength: 2,
-        maxLength: 512
+  prepareForm() {
+    let formFields: FormField<RegisterModel>[] = [
+      {
+        type: 'input',
+        name: 'firstName',
+        label: 'Firstname',
+        placeholder: 'Firstname',
+        hidden: false,
+        validations: {
+          required: true,
+          minLength: 2,
+          maxLength: 512
+        },
+        errorMessages: [ 
+          { required: 'First name is required' },
+          { minLength: 'Min 2 character' },
+          { maxLength: 'Max 512 character' }
+         ]
       },
-      errorMessages: [ 
-        { required: 'First name is required' },
-        { minLength: 'Min 2 character' },
-        { maxLength: 'Max 512 character' }
-       ]
-    },
-    {
-      type: 'input',
-      name: 'lastName',
-      label: 'Lastname',
-      placeholder: 'Lastname',
-      hidden: false,
-      validations: {
-        required: true,
-        minLength: 2,
-        maxLength: 512
+      {
+        type: 'input',
+        name: 'lastName',
+        label: 'Lastname',
+        placeholder: 'Lastname',
+        hidden: false,
+        validations: {
+          required: true,
+          minLength: 2,
+          maxLength: 512
+        },
+        errorMessages: [ 
+          { required: 'Last name is required' },
+          { minLength: 'Min 2 character' },
+          { maxLength: 'Max 512 character' }
+         ]
       },
-      errorMessages: [ 
-        { required: 'Last name is required' },
-        { minLength: 'Min 2 character' },
-        { maxLength: 'Max 512 character' }
-       ]
-    },
-    {
-      type: 'input',
-      name: 'email',
-      label: 'Email',
-      placeholder: 'email',
-      hidden: false,
-      validations: {
-        required: true,
-        email: true,
-        minLength: 5,
-        maxLength: 512,
-        pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}$',
-        isServerSideCheck: true,
-        isFieldValid: false
+      {
+        type: 'input',
+        name: 'email',
+        label: 'Email',
+        placeholder: 'email',
+        hidden: false,
+        validations: {
+          required: true,
+          email: true,
+          minLength: 5,
+          maxLength: 512,
+          pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}$',
+          isServerSideCheck: true,
+          isFieldValid: false,
+          customValidators: [isEmailDomainSupportValidator(this._authService)]
+        },
+        errorMessages: [ 
+          { require: 'Email is required' },
+          { minLength: 'Min 5 character' },
+          { maxLength: 'Max 512 character' },
+          { emailExists: 'Email already exists' },
+          { pattern: 'Invalid email' },
+          { emailDomain: 'Provided email domain not support' }
+         ]
       },
-      errorMessages: [ 
-        { require: 'Email is required' },
-        { minLength: 'Min 5 character' },
-        { maxLength: 'Max 512 character' },
-        { emailExists: 'Email already exists' },
-        { pattern: 'Invalid email' }
-       ]
-    },
-    {
-      type: 'input',
-      name: 'password',
-      label: 'Password',
-      placeholder: 'password',
-      hidden: false,
-      validations: {
-        required: true,
-        minLength: 8,
-        password: true,
-        maxLength: 512,
-        pattern: `^(?!<username>).*?(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':"\\\\|,.<>\\/?]).{8,}$`
+      {
+        type: 'input',
+        name: 'password',
+        label: 'Password',
+        placeholder: 'password',
+        hidden: false,
+        validations: {
+          required: true,
+          minLength: 8,
+          password: true,
+          maxLength: 512,
+          pattern: `^(?!<username>).*?(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':"\\\\|,.<>\\/?]).{8,}$`
+        },
+        errorMessages: [ 
+          { required: 'Password is required' },
+          { minLength: 'Min 8 character' },
+          { maxLength: 'Max 512 character' },
+          { password: 'Invalid password' },
+          { pattern: "One uppercase and one lowercase and one number and one special character" }
+         ]
       },
-      errorMessages: [ 
-        { required: 'Password is required' },
-        { minLength: 'Min 8 character' },
-        { maxLength: 'Max 512 character' },
-        { password: 'Invalid password' },
-        { pattern: "One uppercase and one lowercase and one number and one special character" }
-       ]
-    },
-    {
-      type: 'input',
-      name: 'confirmPassword',
-      label: 'Confirm password',
-      placeholder: 'confirm password',
-      hidden: false,
-      validations: {
-        required: true,
-        minLength: 8,
-        password: true,
-        maxLength: 512,
-        parentControl: { "controlName": "password" }
+      {
+        type: 'input',
+        name: 'confirmPassword',
+        label: 'Confirm password',
+        placeholder: 'confirm password',
+        hidden: false,
+        validations: {
+          required: true,
+          minLength: 8,
+          password: true,
+          maxLength: 512,
+          parentControl: { "controlName": "password" }
+        },
+        errorMessages: [ 
+          { required: 'Password is required' },
+          { minLength: 'Min 8 character' },
+          { maxLength: 'Max 512 character' },
+          { password: 'Invalid password' },
+          { parentControl: 'Password and confirm password should be match' }
+         ]
       },
-      errorMessages: [ 
-        { required: 'Password is required' },
-        { minLength: 'Min 8 character' },
-        { maxLength: 'Max 512 character' },
-        { password: 'Invalid password' },
-        { parentControl: 'Password and confirm password should be match' }
-       ]
-    },
-    {
-      type: 'checkbox',
-      name: 'isTeamsAndConditionAccepted',
-      label: 'Teams and conditions',
-      hidden: true,
-      validations: {
-        required: true
-      },
-      errorMessages: [ 
-        { require: 'Please accept teams and conditions' },
-       ]
-    }
-  ]
+      {
+        type: 'checkbox',
+        name: 'isTeamsAndConditionAccepted',
+        label: 'Teams and conditions',
+        hidden: true,
+        validations: {
+          required: true
+        },
+        errorMessages: [ 
+          { require: 'Please accept teams and conditions' },
+         ]
+      }
+    ]
+  }
 
   createRegisterForm() {
     return this.registerForm = this._fb.group({
       firstName: [''],
       lastName: [''],
-      email: ['', { asyncValidators: [emailExistsValidatorFactory(this._authService)] }],
+      email: ['', { 
+        asyncValidators: [
+          emailExistsValidatorFactory(this._authService),
+          isEmailDomainSupportValidator(this._authService),
+        ], updateOn: 'blur' }],
       password: [''],
       confirmPassword: [''],
       isTeamsAndConditionAccepted: [false]

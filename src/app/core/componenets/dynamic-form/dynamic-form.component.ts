@@ -22,6 +22,7 @@ import { emailExistsValidatorFactory } from '../../validators/emailExistsValidat
 import { AuthService } from '../../../features/Services/authService/auth.service';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { enableControlWhenParentValid } from '../../validators/enableControlWhenParentValid';
+import { isEmailDomainSupportValidator } from '../../validators/isEmailDomainSupportValidator';
 
 
 @Component({
@@ -107,8 +108,14 @@ export class DynamicFormComponent implements OnChanges {
       if (rules.minLength !== undefined) validators.push(Validators.minLength(rules.minLength));
       if (rules.maxLength !== undefined) validators.push(Validators.maxLength(rules.maxLength));
       if (rules.pattern) validators.push(Validators.pattern(rules.pattern));
-      if (rules.email) validators.push(Validators.email);
-      if (rules.customValidator) validators.push(rules.customValidator);
+      if (rules.email) {
+        validators.push(Validators.email);
+      }
+      
+      if (rules.customValidators?.length)  { 
+        asyncValidators.push(isEmailDomainSupportValidator(this._authService));
+        validators.push(...rules.customValidators)
+      };
       if(rules.parentControl?.controlName) validators.push(matchOtherValidator(rules?.parentControl?.controlName));
 
       if (rules.isServerSideCheck) {
