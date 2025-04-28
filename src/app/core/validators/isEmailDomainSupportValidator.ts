@@ -9,7 +9,7 @@ export function isEmailDomainSupportValidator(authService: AuthService): AsyncVa
     return timer(500).pipe(
       switchMap(() =>
         authService.isEmailDomainSupport({ email: control.value }).pipe(
-          map((res: any) => (res.data["isEmailSupport"] ? null : { emailDomain: true })),
+          map((res: any) => (res.data["isEmailSupport"] ? null : { isEmailSupport: true })),
           catchError(() => of(null))
         )
       )

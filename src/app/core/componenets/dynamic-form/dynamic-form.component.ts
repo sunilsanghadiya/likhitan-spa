@@ -112,10 +112,14 @@ export class DynamicFormComponent implements OnChanges {
         validators.push(Validators.email);
       }
       
-      if (rules.customValidators?.length)  { 
+      if (rules?.customValidators?.length)  { 
+        rules.customValidators.forEach((validator: any) => {
+          validators.push(validator)
+        })
         asyncValidators.push(isEmailDomainSupportValidator(this._authService));
-        validators.push(...rules.customValidators)
       };
+
+
       if(rules.parentControl?.controlName) validators.push(matchOtherValidator(rules?.parentControl?.controlName));
 
       if (rules.isServerSideCheck) {

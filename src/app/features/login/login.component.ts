@@ -53,6 +53,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   loginForm!: FormGroup;
   loginData!: LoginResponse;
   returnUrl: string = '';
+  formFields: any;
 
   constructor(public _fb: FormBuilder, public _authService: AuthService, 
     public _router: Router,  private route: ActivatedRoute) {
@@ -67,48 +68,52 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.createLoginForm()
+    this.prepareForm();
   }
 
-  formFields: FormField<LoginModel>[] = [
-    {
-      type: 'input',
-      name: 'email',
-      label: 'Email',
-      placeholder: 'Enter your email',
-      validations: {
-        required: true,
-        email: true,
-        minLength: 5,
-        maxLength: 512,
-        pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}$'
+  prepareForm() {
+   let formFieldsData: FormField<LoginModel>[] = [
+      {
+        type: 'input',
+        name: 'email',
+        label: 'Email',
+        placeholder: 'Enter your email',
+        validations: {
+          required: true,
+          email: true,
+          minLength: 5,
+          maxLength: 512,
+          pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}$'
+        },
+        errorMessages: [
+          { require: 'Email is required.' },
+          { minLength: 'Min 5 character.' },
+          { maxLength: 'Max 512 character.' },
+          { emailExists: 'Email does not exists.' },
+          { pattern: 'Invalid email.' },
+          // { emailDomain: 'Provided email domain does not support' }
+        ]
       },
-      errorMessages: [
-        { require: 'Email is required.' },
-        { minLength: 'Min 5 character.' },
-        { maxLength: 'Max 512 character.' },
-        { emailExists: 'Email does not exists.' },
-        { pattern: 'Invalid email.' },
-        // { emailDomain: 'Provided email domain does not support' }
-      ]
-    },
-    {
-      type: 'input',
-      name: 'password',
-      label: 'Password',
-      placeholder: 'Enter your password',
-      validations: {
-        required: true,
-        minLength: 8,
-        // password: true,
-        maxLength: 512
-      },
-      errorMessages: [
-        { require: 'Password is required.' },
-        { minLength: 'Min 8 character.' },
-        { maxLength: 'Max 512 character.' }
-      ]
-    }
-  ]
+      {
+        type: 'input',
+        name: 'password',
+        label: 'Password',
+        placeholder: 'Enter your password',
+        validations: {
+          required: true,
+          minLength: 8,
+          // password: true,
+          maxLength: 512
+        },
+        errorMessages: [
+          { require: 'Password is required.' },
+          { minLength: 'Min 8 character.' },
+          { maxLength: 'Max 512 character.' }
+        ]
+      }
+    ]
+    this.formFields = formFieldsData;
+  }
 
   createLoginForm() {
     return this.loginForm = this._fb.group({
