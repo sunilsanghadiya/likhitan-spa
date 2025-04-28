@@ -1,4 +1,4 @@
-import { Component, computed, effect, EnvironmentInjector, EventEmitter, Input, OnChanges, Output, runInInjectionContext, Signal, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, EnvironmentInjector, EventEmitter, Input, OnChanges, Output, runInInjectionContext, Signal, SimpleChanges } from '@angular/core';
 import { AsyncValidatorFn, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { NzFormItemComponent } from 'ng-zorro-antd/form';
 import { NzFormLabelComponent } from 'ng-zorro-antd/form';
@@ -48,6 +48,7 @@ import { isEmailDomainSupportValidator } from '../../validators/isEmailDomainSup
   templateUrl: './dynamic-form.component.html',
   styleUrl: './dynamic-form.component.css',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DynamicFormComponent implements OnChanges {
 

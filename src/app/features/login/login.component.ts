@@ -16,10 +16,12 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzTypographyComponent } from 'ng-zorro-antd/typography';
 import { DynamicFormComponent } from "../../core/componenets/dynamic-form/dynamic-form.component";
+import { HelperService } from '../../core/Helper/HelperService';
 import { FormField } from '../../core/interfaces/DynamicFields';
 import { emailExistsValidatorFactory } from '../../core/validators/emailExistsValidatorFactory';
 import { LoginResponse } from '../Common/Models/LoginDto';
 import { AuthService } from '../Services/authService/auth.service';
+import { UserRoles } from './../../core/enums/UserRoles';
 import { LoginModel } from './interfaces/loginModel';
 
 @Component({
@@ -54,20 +56,23 @@ export class LoginComponent implements OnInit, OnDestroy {
   loginData!: LoginResponse;
   returnUrl: string = '';
   formFields: any;
+  userRole?: UserRoles;
 
   constructor(public _fb: FormBuilder, public _authService: AuthService, 
-    public _router: Router,  private route: ActivatedRoute) {
-      this.route.queryParams.subscribe(params => {
-        this.returnUrl = params['/home'] || '/';
-      });
-
+    public _router: Router,  private route: ActivatedRoute, public _helperService: HelperService) {
      }
 
   ngOnDestroy() {
   }
 
   ngOnInit() {
-    this.createLoginForm()
+    this.userRole = this.route.snapshot.data['userRole'];
+    
+    // if(this.userRole == UserRoles.Standard) {
+    //   this._router.navigate(['/home'])
+    // }
+    
+      this.createLoginForm()
     this.prepareForm();
   }
 
@@ -120,8 +125,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       email: ['', {
         asyncValidators: [emailExistsValidatorFactory(this._authService)],
         updateOn: 'blur'
-      }
-      ],
+      }],
       password: ['']
     })
   }
@@ -137,8 +141,12 @@ export class LoginComponent implements OnInit, OnDestroy {
     this._authService.login(raw).subscribe({
       next: (data: LoginResponse) => {
         this.loginData = data;
-        if (this.loginData.data.accessToken) {
+        if (this.loginData.data.roleId === UserRoles.Standard) {
           this._router.navigate(['/home']);
+        } else if (this.loginData.data.roleId === UserRoles.Author) {
+          this._router.navigate(['/home'])
+        } else if (this.loginData.data.roleId === UserRoles.Admin) {
+          this._router.navigate(['/dashboard'])
         }
       },
       error: (error: any) => {

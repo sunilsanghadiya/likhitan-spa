@@ -1,7 +1,8 @@
 import { HttpClient, HttpContextToken, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { catchError, map, Observable, of, shareReplay } from "rxjs";
+import { BehaviorSubject, catchError, map, Observable, of, shareReplay } from "rxjs";
 import { AuthService } from "../../features/Services/authService/auth.service";
+import { UserRoles } from "../enums/UserRoles";
 
 @Injectable({
     providedIn: 'root'
@@ -10,6 +11,8 @@ export class HelperService {
 
     passwordPattern = new RegExp(`^(?!<username>).*?(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':"\\\\|,.<>\\/?]).{8,}$`);
 
+    private currentRoleSubject = new BehaviorSubject<UserRoles>(UserRoles.Standard);
+    
     constructor(public _authService: AuthService) { }
 
     IsUserAuthenticated(): Observable<boolean> {
@@ -40,4 +43,12 @@ export class HelperService {
     public  ADDITIONAL_HEADERS = new HttpContextToken<Record<string, string>>(
       () => ({})
     );
+
+    getCurrentUserRole(): UserRoles {
+      return this.currentRoleSubject.value;
+    }
+  
+    setCurrentUserRole(role: UserRoles): void {
+      this.currentRoleSubject.next(role);
+    }
 }
