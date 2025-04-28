@@ -39,7 +39,7 @@ export interface ValidationRules {
   pattern?: string;
   email?: boolean;
   password?: boolean;
-  customValidators?: ((control: AbstractControl) => ValidationErrors | null)[];
+  customValidators?: Array<{ validator: (control: AbstractControl) => ValidationErrors | null; errorKey: string; }>;
   errorMessages?: any[];
   parentControl?: any;
   isServerSideCheck?: boolean;

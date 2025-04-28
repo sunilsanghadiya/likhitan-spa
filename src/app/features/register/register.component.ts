@@ -26,6 +26,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   registerForm!: FormGroup;
   registerUserResponse: any;
+  formFields?: any[];
 
   constructor(public _fb: FormBuilder, public _authService: AuthService, public _route: Router,
     public _dataStoreService: DataStoreService<any>
@@ -41,7 +42,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   prepareForm() {
-    let formFields: FormField<RegisterModel>[] = [
+    let formFieldsData: FormField<RegisterModel>[] = [
       {
         type: 'input',
         name: 'firstName',
@@ -90,7 +91,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
           pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}$',
           isServerSideCheck: true,
           isFieldValid: false,
-          customValidators: [isEmailDomainSupportValidator(this._authService)]
+          customValidators: [ {
+            validator: isEmailDomainSupportValidator(this._authService),
+            errorKey: 'isEmailSupport'
+          }]
         },
         errorMessages: [ 
           { require: 'Email is required' },
@@ -98,7 +102,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
           { maxLength: 'Max 512 character' },
           { emailExists: 'Email already exists' },
           { pattern: 'Invalid email' },
-          { emailDomain: 'Provided email domain not support' }
+          { isEmailSupport: 'Provided email domain not support' }
          ]
       },
       {
@@ -156,6 +160,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
          ]
       }
     ]
+    return this.formFields = formFieldsData;
   }
 
   createRegisterForm() {
