@@ -57,7 +57,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   formFields: any;
 
   constructor(public _fb: FormBuilder, public _authService: AuthService, 
-    public _router: Router,  private route: ActivatedRoute) { }
+    public _router: Router) { }
 
   ngOnDestroy() {
   }
@@ -86,8 +86,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           { minLength: 'Min 5 character.' },
           { maxLength: 'Max 512 character.' },
           { emailExists: 'Email does not exists.' },
-          { pattern: 'Invalid email.' },
-          // { emailDomain: 'Provided email domain does not support' }
+          { pattern: 'Invalid email.' }
         ]
       },
       {
