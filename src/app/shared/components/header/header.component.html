@@ -1,14 +1,20 @@
 <nz-layout>
     <nz-header class="header" id="headerId">
         <div class="left-section" id="leftSectionId">
-            <nz-icon nzType="search" nzTheme="outline" class="searchBarIcon" (click)="onSearchClick()" />
+            @if(isShowSearchBar) {
+                <nz-icon nzType="search" nzTheme="outline" class="searchBarIcon" (click)="onSearchClick()" />
+            }
         </div>
         <div class="middleSection" id="middleSectionId">
-            <h2 id="mainTitleId" nz-typography>Likhitan</h2>
+            @if(isShowTitle) {
+                <h2 id="mainTitleId" nz-typography>Likhitan</h2>
+            }
         </div>
         <div class="right-section" id="rightSectionId">
             <div class="becomeAuthorBtnDiv">
-                <button  nz-button nzType="primary" nzBlock id="becomeAuthorId" class="becomeAuthorBtn">Become author</button>
+                @if(isShowBecomeAuthor) {
+                    <button  nz-button nzType="primary" nzBlock id="becomeAuthorId" class="becomeAuthorBtn">Become author</button>
+                }
             </div>
 
             <div nz-dropdown [nzDropdownMenu]="menu" nzTrigger="hover" nzPlacement="topRight">

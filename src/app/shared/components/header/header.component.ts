@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NzFlexModule } from 'ng-zorro-antd/flex';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
@@ -40,6 +40,10 @@ import { LogoutResponse } from '../../../features/Common/Models/LogoutResponse';
 })
 export class HeaderComponent implements OnInit {
 
+  @Input() isShowSearchBar: boolean = true;
+  @Input() isShowTitle: boolean = true;
+  @Input() isShowBecomeAuthor: boolean = true;
+  
   searchIcon = '';
   userAvatarUrl: string = '';
   
