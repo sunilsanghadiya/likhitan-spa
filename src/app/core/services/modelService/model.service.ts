@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Injectable, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, Injectable, TemplateRef, Type } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 
@@ -11,7 +11,8 @@ export class ModelService {
 
   openCustomModal(options: {
     title: string | TemplateRef<string>;
-    content: string | TemplateRef<any>;
+    content: string | TemplateRef<any> | Type<any>;
+    componentParams?: Record<string, any>
     width?: string;
     footer?: TemplateRef<any> | null;
     onAfterOpen?: () => EventEmitter<any>;
@@ -46,10 +47,10 @@ export class ModelService {
     nzData?: {} | any;
     nzIconType?: string;
     nzAutofocus?: string;
-    onOk?: () => EventEmitter<void>;
+    onOk?: (instance: any) => any;
     onCancel?: () => EventEmitter<void>;
   }) {
-    this.modal.create({
+  return this.modal.create({
       nzTitle: options.title,
       nzContent: options.content,
       nzWidth: options.width || '520px',

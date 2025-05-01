@@ -1,17 +1,15 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NzCardComponent } from 'ng-zorro-antd/card';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { DynamicFormComponent } from '../../core/componenets/dynamic-form/dynamic-form.component';
 import { FormField } from '../../core/interfaces/DynamicFields';
-import { SenOTP } from '../Common/interfaces/SendOTPDto';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AuthService } from '../Services/authService/auth.service';
 import { DataStoreService } from '../../core/services/dataStoreService/data-store.service';
-import { SendOTPResponse } from '../Common/Models/SendOTPResponse';
-import { NzNotificationPlacement } from 'ng-zorro-antd/notification';
-import { CookieService } from 'ngx-cookie-service';
 import { NotificationService } from '../../core/services/nzNotification/nz-notification.service';
+import { SenOTP } from '../Common/interfaces/SendOTPDto';
+import { SendOTPResponse } from '../Common/Models/SendOTPResponse';
+import { AuthService } from '../Services/authService/auth.service';
 
 @Component({
   selector: 'app-otp',
@@ -29,7 +27,7 @@ export class OtpComponent implements OnInit {
   otpResponse: any;
 
   constructor(public _fb: FormBuilder, public _router: Router, public _authService: AuthService,
-    public _dataStoreService: DataStoreService<any>, public _cookieService: CookieService, public _notificationService: NotificationService
+    public _dataStoreService: DataStoreService<any>, public _notificationService: NotificationService
   ) { }
 
   ngOnInit() {

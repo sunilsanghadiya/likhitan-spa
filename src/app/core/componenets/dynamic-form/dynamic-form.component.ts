@@ -1,4 +1,5 @@
-import { Component, computed, effect, EnvironmentInjector, EventEmitter, Input, OnChanges, Output, runInInjectionContext, Signal, SimpleChanges } from '@angular/core';
+import { Component, computed, effect, EnvironmentInjector, EventEmitter, Input, OnChanges, Output, runInInjectionContext, 
+  Signal, SimpleChanges } from '@angular/core';
 import { AsyncValidatorFn, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { NzFormItemComponent } from 'ng-zorro-antd/form';
 import { NzFormLabelComponent } from 'ng-zorro-antd/form';
@@ -21,7 +22,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { emailExistsValidatorFactory } from '../../validators/emailExistsValidatorFactory';
 import { AuthService } from '../../../features/Services/authService/auth.service';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
-import { enableControlWhenParentValid } from '../../validators/enableControlWhenParentValid';
 import { isEmailDomainSupportValidator } from '../../validators/isEmailDomainSupportValidator';
 
 
@@ -52,10 +52,16 @@ import { isEmailDomainSupportValidator } from '../../validators/isEmailDomainSup
 export class DynamicFormComponent implements OnChanges {
 
   @Input() formGroup!: FormGroup;
+  @Input() isShowSubmitBtn: boolean = true;
   @Input() formFields: any;
   @Input() submitLabel: string = 'Submit';
   @Output() onSubmit = new EventEmitter<FormGroup>();
   @Output() formStatusChanged = new EventEmitter<boolean>();
+  @Output() dateFieldChanged = new EventEmitter<any>();
+  @Output() fieldChanged = new EventEmitter<{ 
+    field: string; 
+    value: any;
+  }>();
 
   formValueSignal!: Signal<any>;
   formValidSignal!: Signal<boolean>;
@@ -153,8 +159,8 @@ export class DynamicFormComponent implements OnChanges {
     return field.name.toLowerCase().includes('password');
   }
 
-  // togglePasswordVisibility(fieldName: string): void {
-  //   this.passwordVisibility[fieldName] = !this.passwordVisibility[fieldName];
-  // }
+  onFieldChange(field: string, value: any) {
+    this.fieldChanged.emit({ field, value});
+  }
 
 }

@@ -9,4 +9,6 @@ export const ApiEndpoints = {
     ForgotPassword: '/api/auth/forgotPassword',
     Logout: '/api/auth/logout',
     IsEmailDomainSupport: '/api/auth/IsEmailDomainSupport',
+    GetAuthorById: '/api/author/GetAuthorById',
+    BecomeAuthor: '/api/author/BecomeAuthor',
 }

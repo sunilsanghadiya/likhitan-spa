@@ -10,10 +10,16 @@ import { LoggingInterceptor } from './core/interceptors/loaderInterceptor/loader
 import { RefreshTokenInterceptor } from './core/interceptors/refreshToken-interceptor/refresh-token.interceptor';
 import { TimingInterceptor } from './core/interceptors/timing-interceptor/timing.interceptor';
 import { AuthGuard } from './core/guards/auth/auth.guard';
+import { provideNzI18n, en_US } from 'ng-zorro-antd/i18n';
+import { serverDownInterceptor } from './core/interceptors/serverDownInterceptor/server-down.interceptor';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideNzI18n(en_US),
+    NzModalModule,
     AuthGuard,
+    NzModalService,
     provideZoneChangeDetection({ eventCoalescing: true }), 
     provideRouter(routes), 
     provideClientHydration(withEventReplay(), withHttpTransferCacheOptions({
@@ -25,7 +31,8 @@ export const appConfig: ApplicationConfig = {
       ErrorInterceptor,
       AuthInterceptor,
       TimingInterceptor,
-      RefreshTokenInterceptor
+      RefreshTokenInterceptor,
+      // serverDownInterceptor
     ]))
   ]
 };

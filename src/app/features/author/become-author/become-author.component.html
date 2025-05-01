@@ -1,0 +1,8 @@
+
+<app-dynamic-form 
+[formGroup]="becomeAuthorForm"
+[formFields]="formFields"
+[isShowSubmitBtn]="true"
+(fieldChanged)="fieldValueChanged($event)"
+(onSubmit)="onSubmitForm($event)"
+/>

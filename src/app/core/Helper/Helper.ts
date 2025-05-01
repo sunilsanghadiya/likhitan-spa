@@ -21,3 +21,14 @@ export const markFormGroupTouched = (formGroup: FormGroup) => {
 
 export const getDynamicFormControls = (formGroup: FormGroup) => 
     formGroup.controls
+
+export function enumToDropdownOptions(enumObj: any, labelFormat: (key: string) => string = (key) => 
+      key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())
+  ): { label: string; value: any }[] {
+    return Object.keys(enumObj)
+      .filter(key => isNaN(Number(key))) 
+      .map(key => ({
+        label: labelFormat(key),
+        value: enumObj[key]
+      }));
+  }
