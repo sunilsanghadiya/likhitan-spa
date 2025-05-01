@@ -22,21 +22,30 @@
               [formControlName]="field.name" 
               [placeholder]="field.placeholder"
               [type]="isPassword(field) ? 'password' : 'text'"
+              (ngModelChange)="onFieldChange(field.name, $event)"
             />
   
             <!-- Select -->
-            <nz-select *ngSwitchCase="'select'" [nz-tooltip]="field.tooltip" [formControlName]="field.name" [nzPlaceHolder]="field.placeholder">
+            <nz-select *ngSwitchCase="'select'" [nz-tooltip]="field.tooltip" [formControlName]="field.name" 
+            (ngModelChange)="onFieldChange(field.name, $event)" [nzPlaceHolder]="field.placeholder">
               <nz-option *ngFor="let opt of field.options" [nzLabel]="opt.label" [nzValue]="opt.value"></nz-option>
             </nz-select>
   
             <!-- Checkbox -->
-            <label *ngSwitchCase="'checkbox'" [nz-tooltip]="field.tooltip" nz-checkbox [formControlName]="field.name">
+            <label *ngSwitchCase="'checkbox'"  [nz-tooltip]="field.tooltip" nz-checkbox [formControlName]="field.name">
               {{ field.label }}
             </label>
   
             <!-- Date Picker -->
-            <nz-date-picker *ngSwitchCase="'date'" [nz-tooltip]="field.tooltip" [formControlName]="field.name" [nzPlaceHolder]="field.placeholder"></nz-date-picker>
-  
+            <nz-date-picker 
+              *ngSwitchCase="'date'"
+              [nzAllowClear]="true" 
+              [formControlName]="field.name" 
+              [nz-tooltip]="field.tooltip" 
+              [nzPlaceHolder]="field.placeholder" 
+              (ngModelChange)="onFieldChange(field.name, $event)"
+              [nzSize]="'small'">
+            </nz-date-picker>
           </ng-container>
         </nz-form-control>
 
@@ -51,6 +60,8 @@
   }
 
   <div class="submitBtn">
-    <button nz-button nzType="primary" nzBlock> {{ submitLabel }} </button>
+    @if(isShowSubmitBtn) {
+      <button nz-button nzType="primary" nzBlock> {{ submitLabel }} </button>
+    }
   </div>
 </form>
