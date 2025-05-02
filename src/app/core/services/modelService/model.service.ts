@@ -48,7 +48,7 @@ export class ModelService {
     nzIconType?: string;
     nzAutofocus?: string;
     onOk?: (instance: any) => any;
-    onCancel?: () => EventEmitter<void>;
+    onCancel?: () => EventEmitter<any>;
   }) {
   return this.modal.create({
       nzTitle: options.title,

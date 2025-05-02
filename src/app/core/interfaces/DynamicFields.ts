@@ -14,6 +14,8 @@ export interface BaseField<T> {
   disabled?: boolean;
   errorMessages?: any[];
   tooltip?: string
+  className?: string;
+  id?: any;
 }
 
 

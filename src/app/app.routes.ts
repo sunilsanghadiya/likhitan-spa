@@ -7,6 +7,7 @@ import { OtpComponent } from './features/otp/otp.component';
 import { ErrorComponent } from './core/componenets/error/error.component';
 import { ForgotPasswordComponent } from './features/forgot-password/forgot-password.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { WriteBlogComponent } from './features/write-blog/write-blog.component';
 
 export const routes: Routes = [
     {
@@ -17,6 +18,11 @@ export const routes: Routes = [
     {
         path: 'dashboard',
         component: DashboardComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'new-blog',
+        component: WriteBlogComponent,
         canActivate: [AuthGuard]
     },
     {

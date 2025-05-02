@@ -12,15 +12,17 @@
         </div>
         <div class="right-section" id="rightSectionId">
             <div class="becomeAuthorBtnDiv">
-                @if(isShowBecomeAuthor) {
+                @if(isShowBecomeAuthor && !isShowWrite) {
                     <button  nz-button nzType="primary" nzBlock id="becomeAuthorId" class="becomeAuthorBtn" (click)="onBecomeAuthor()">Become author</button>
+                } @else if(isShowWrite) {
+                    <button  nz-button nzType="primary" nzBlock id="writeBlogId" class="writeBlog" (click)="onWriteBlog()">
+                        <nz-icon nzType="edit" nzTheme="outline" class="pencilIconBlog" />
+                    </button>
                 }
             </div>
 
             <div nz-dropdown [nzDropdownMenu]="menu" nzTrigger="hover" nzPlacement="topRight">
-                <nz-avatar nzSize="large" nzIcon="user" [nzSrc]="userAvatarUrl"
-                    style="cursor: pointer;">
-                </nz-avatar>
+                <nz-avatar nzSize="small" nzIcon="user" [nzSrc]="userAvatarUrl" class="profileAvatar" style="cursor: pointer;"></nz-avatar>
             </div>
 
             <nz-dropdown-menu #menu="nzDropdownMenu">

@@ -16,6 +16,8 @@
           <ng-container [ngSwitch]="field.type">
             <!-- Input -->
             <input 
+              [class]="field?.className"
+              #inputControl
               [nz-tooltip]="field.tooltip"
               *ngSwitchCase="'input'" 
               nz-input 
@@ -23,21 +25,25 @@
               [placeholder]="field.placeholder"
               [type]="isPassword(field) ? 'password' : 'text'"
               (ngModelChange)="onFieldChange(field.name, $event)"
+              (keydown.enter)="onFieldEnter($event)"
             />
   
             <!-- Select -->
-            <nz-select *ngSwitchCase="'select'" [nz-tooltip]="field.tooltip" [formControlName]="field.name" 
+            <nz-select #selectControls *ngSwitchCase="'select'" [nz-tooltip]="field.tooltip" [formControlName]="field.name" [class]="field.className"
             (ngModelChange)="onFieldChange(field.name, $event)" [nzPlaceHolder]="field.placeholder">
               <nz-option *ngFor="let opt of field.options" [nzLabel]="opt.label" [nzValue]="opt.value"></nz-option>
             </nz-select>
   
             <!-- Checkbox -->
-            <label *ngSwitchCase="'checkbox'"  [nz-tooltip]="field.tooltip" nz-checkbox [formControlName]="field.name">
+            <label #checkboxControl *ngSwitchCase="'checkbox'" [nz-tooltip]="field.tooltip" nz-checkbox [formControlName]="field.name" [class]="field.className">
               {{ field.label }}
             </label>
   
             <!-- Date Picker -->
             <nz-date-picker 
+
+              [class]="field.className"
+              #datePickerControl
               *ngSwitchCase="'date'"
               [nzAllowClear]="true" 
               [formControlName]="field.name" 
