@@ -11,6 +11,8 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    padding-left: 1rem;
+    font-size: 1rem;
   }
   
   .logo {
@@ -22,15 +24,6 @@
     align-items: center;
   }
   
-  .profile-icon {
-    cursor: pointer;
-  }
-
-  .leftSideDetails {
-    justify-content: center;
-    align-content: center;
-  }
-
   .menuItems {
     padding: 0.5rem;
   }
@@ -51,10 +44,14 @@
     padding-right: 3rem;
   }
 
-nz-header {
-  box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.2);
-}
-
 .searchBarIcon {
   cursor: pointer;
+}
+
+.pencilIconBlog {
+  font-size: 1rem;
+}
+
+.profileAvatar {
+  font-size: 1rem;
 }

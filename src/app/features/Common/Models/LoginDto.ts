@@ -9,4 +9,5 @@ export interface LoginResponse extends ApiResponse<LoginResponse> {
     roleId: number;
     accessToken: string;
     refreshToken: string;
+    authorId?: number;
 }

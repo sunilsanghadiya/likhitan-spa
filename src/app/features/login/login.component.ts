@@ -1,6 +1,6 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -15,13 +15,17 @@ import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzTypographyComponent } from 'ng-zorro-antd/typography';
+import { Subscription } from 'rxjs';
 import { DynamicFormComponent } from "../../core/componenets/dynamic-form/dynamic-form.component";
+import { UserRoles } from '../../core/enums/UserRoles';
+import { HelperService } from '../../core/Helper/HelperService';
 import { FormField } from '../../core/interfaces/DynamicFields';
 import { emailExistsValidatorFactory } from '../../core/validators/emailExistsValidatorFactory';
 import { LoginResponse } from '../Common/Models/LoginDto';
 import { AuthService } from '../Services/authService/auth.service';
 import { LoginModel } from './interfaces/loginModel';
-import { UserRoles } from '../../core/enums/UserRoles';
+import { StatesService } from '../../core/Helper/states.service';
+import { NotificationService } from '../../core/services/nzNotification/nz-notification.service';
 
 @Component({
   selector: 'app-login',
@@ -46,7 +50,7 @@ import { UserRoles } from '../../core/enums/UserRoles';
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
-  providers: [ ]
+  providers: []
 })
 export class LoginComponent implements OnInit, OnDestroy {
 
@@ -55,11 +59,13 @@ export class LoginComponent implements OnInit, OnDestroy {
   loginData!: LoginResponse;
   returnUrl: string = '';
   formFields: any;
+  private subscription!: Subscription;
 
-  constructor(public _fb: FormBuilder, public _authService: AuthService, 
-    public _router: Router) { }
+  constructor(public _fb: FormBuilder, public _authService: AuthService,
+    public _router: Router, private _helperService: HelperService, private _statesService: StatesService, private _notificationService: NotificationService) { }
 
   ngOnDestroy() {
+    // this.subscription.unsubscribe();
   }
 
   ngOnInit() {
@@ -68,7 +74,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   prepareForm() {
-   let formFieldsData: FormField<LoginModel>[] = [
+    let formFieldsData: FormField<LoginModel>[] = [
       {
         type: 'input',
         name: 'email',
@@ -133,13 +139,20 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.loginData = data;
         if (this.loginData.data.roleId == UserRoles.Standard) {
           this._router.navigate(['/home']);
-        } else if(this.loginData.data.roleId == UserRoles.Author) {
+        }
+        else if (this.loginData.data.roleId == UserRoles.Author) {
+          this._helperService.prepareEncryptData(this.loginData.data?.authorId);
+          this._statesService.setData({ authorId: this.loginData.data.authorId });
           this._router.navigate(['/home']);
-        } else if (this.loginData.data.roleId == UserRoles.Admin) {
+        }
+        else if (this.loginData.data.roleId == UserRoles.Admin) {
           this._router.navigate(['/dashboard']);
         }
+        this._helperService.prepareEncryptData(this.loginData.data?.roleId);
+        this._statesService.setData({ roleId: this.loginData.data.roleId });
       },
       error: (error: any) => {
+        this._notificationService.failedNotification("Internal server error", error)
         console.log(error);
       }
     })
