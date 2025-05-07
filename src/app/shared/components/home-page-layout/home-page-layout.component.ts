@@ -1,13 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { NzLayoutModule } from 'ng-zorro-antd/layout';
-import { NzAvatarModule } from 'ng-zorro-antd/avatar';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzIconModule, NzIconService } from 'ng-zorro-antd/icon';
 import { UserOutline } from '@ant-design/icons-angular/icons';
-import { HeaderComponent } from "../header/header.component";
-import { StatesService } from '../../../core/Helper/states.service';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { NzIconModule, NzIconService } from 'ng-zorro-antd/icon';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { HelperService } from '../../../core/Helper/HelperService';
-import { UserRoles } from '../../../core/enums/UserRoles';
+import { ContentComponent } from "../content/content.component";
+import { HeaderComponent } from "../header/header.component";
 
 @Component({
   selector: 'app-home-page-layout',
@@ -16,7 +15,8 @@ import { UserRoles } from '../../../core/enums/UserRoles';
     NzAvatarModule,
     NzInputModule,
     NzIconModule,
-    HeaderComponent
+    HeaderComponent,
+    ContentComponent
 ],
   templateUrl: './home-page-layout.component.html',
   styleUrl: './home-page-layout.component.css'
