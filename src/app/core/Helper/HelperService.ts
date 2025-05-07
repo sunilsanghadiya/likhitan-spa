@@ -96,8 +96,7 @@ export class HelperService {
   async prepareEncryptData(value: any) {
     try {
       const key = await this.generateKey(Env.SECRET_KEY);
-      const data = { authorId: value };
-      const encrypted = await this.encryptData(data, key);
+      const encrypted = await this.encryptData(value, key);
       
       localStorage.setItem("encryptedData", JSON.stringify({
         iv: Array.from(encrypted.iv),

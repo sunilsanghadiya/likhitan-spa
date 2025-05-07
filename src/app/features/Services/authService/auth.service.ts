@@ -10,6 +10,7 @@ import { ForgotPasswordResponse } from '../../Common/Models/ForgotPasswordRespon
 import { LogoutResponse } from '../../Common/Models/LogoutResponse';
 import { ApiEndpoints } from '../../Common/ApiEndpoints/ApiEndpoint';
 import { IsEmailDomainSupportResponse } from '../../Common/Models/IsEmailDomainSupportResponse';
+import { GetOTPResponse } from '../../Common/Models/GetOTPResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -52,5 +53,9 @@ export class AuthService {
 
   isEmailDomainSupport(body: {}): Observable<IsEmailDomainSupportResponse> {
     return this._api.post(ApiEndpoints.IsEmailDomainSupport, body)
+  }
+
+  getOTP(body: any = {}): Observable<GetOTPResponse> {
+    return this._api.post(ApiEndpoints.GetOTP, body);
   }
 }

@@ -11,4 +11,6 @@ export const ApiEndpoints = {
     IsEmailDomainSupport: '/api/auth/IsEmailDomainSupport',
     GetAuthorById: '/api/author/GetAuthorById',
     BecomeAuthor: '/api/author/BecomeAuthor',
+
+    GetOTP: '/api/auth/GetOTP'
 }

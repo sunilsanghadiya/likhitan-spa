@@ -10,6 +10,9 @@ import { NotificationService } from '../../core/services/nzNotification/nz-notif
 import { SenOTP } from '../Common/interfaces/SendOTPDto';
 import { SendOTPResponse } from '../Common/Models/SendOTPResponse';
 import { AuthService } from '../Services/authService/auth.service';
+import { response } from 'express';
+import { GetOTPResponse } from '../Common/Models/GetOTPResponse';
+import { HelperService } from '../../core/Helper/HelperService';
 
 @Component({
   selector: 'app-otp',
@@ -27,7 +30,9 @@ export class OtpComponent implements OnInit {
   otpResponse: any;
 
   constructor(public _fb: FormBuilder, public _router: Router, public _authService: AuthService,
-    public _dataStoreService: DataStoreService<any>, public _notificationService: NotificationService
+    public _dataStoreService: DataStoreService<any>, 
+    public _notificationService: NotificationService,
+    private _helperService: HelperService
   ) { }
 
   ngOnInit() {
@@ -41,13 +46,13 @@ export class OtpComponent implements OnInit {
     })
   }
 
-  onSend(event: any) {
+  async onSend(event: any) {
     if(event.invalid) return;
-    let storedData = this._dataStoreService.getData();
+    let storedData = await this._helperService.prepareDecryptData();
 
     let payload = {
       otp: event.controls['otp']?.value,
-      userId: storedData?.data?.id ?? 0
+      userId: storedData?.userId ?? 0
     }
 
     this._authService.sendOtp(payload).subscribe({
@@ -88,8 +93,21 @@ export class OtpComponent implements OnInit {
     }
   ]
 
-  getOtp() {
-    // this._authService.
+  async getOtp() {
+    let storedData = await this._helperService.prepareDecryptData();
+
+    this._authService.getOTP({ userId: storedData?.userId }).subscribe({
+      next: (response: GetOTPResponse) => {
+        if(response) {
+          
+        }
+      },
+      error: (error: any) => {
+        console.log(error);
+        this._notificationService.failedNotification("Oops", "Unable to get new otp please try again!");
+      },
+      complete: () => {}
+    })
   }
 
 }

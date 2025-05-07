@@ -137,6 +137,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     this._authService.login(raw).subscribe({
       next: (data: LoginResponse) => {
         this.loginData = data;
+        if(!this.loginData.data?.roleId) {
+          this._notificationService.failedNotification("Account locked", "Due to some reason temporary you account locked");
+        }
+
         if (this.loginData.data.roleId == UserRoles.Standard) {
           this._router.navigate(['/home']);
         }
