@@ -1,73 +1,62 @@
-<form [formGroup]="formGroup" (ngSubmit)="callSubmit($event)"  nz-form [nzLayout]="'vertical'">
+<form [formGroup]="formGroup" (ngSubmit)="callSubmit($event)" nz-form [nzLayout]="'vertical'">
   @for(field of formFields; track $index) {
-    <ng-container>
-      <nz-form-item nz-form-item>
-        <nz-form-label nz-form-label>
-          @if(!field.hidden) {
-            <label [for]="field.name">{{ field.label }}</label>
-          }
-        </nz-form-label>
-        <nz-form-control 
-          nz-form-control  
-          [nzHasFeedback]="true"
-          [nzErrorTip]="errorTpl" 
-          [nzValidateStatus]="formGroup.get(field.name)!">
-          
-          <ng-container [ngSwitch]="field.type">
-            <!-- Input -->
-            <input 
-              [class]="field?.className"
-              #inputControl
-              [nz-tooltip]="field.tooltip"
-              *ngSwitchCase="'input'" 
-              nz-input 
-              [formControlName]="field.name" 
-              [placeholder]="field.placeholder"
-              [type]="isPassword(field) ? 'password' : 'text'"
-              (ngModelChange)="onFieldChange(field.name, $event)"
-              (keydown.enter)="onFieldEnter($event)"
-            />
-  
-            <!-- Select -->
-            <nz-select #selectControls *ngSwitchCase="'select'" [nz-tooltip]="field.tooltip" [formControlName]="field.name" [class]="field.className"
-            (ngModelChange)="onFieldChange(field.name, $event)" [nzPlaceHolder]="field.placeholder">
-              <nz-option *ngFor="let opt of field.options" [nzLabel]="opt.label" [nzValue]="opt.value"></nz-option>
-            </nz-select>
-  
-            <!-- Checkbox -->
-            <label #checkboxControl *ngSwitchCase="'checkbox'" [nz-tooltip]="field.tooltip" nz-checkbox [formControlName]="field.name" [class]="field.className">
-              {{ field.label }}
-            </label>
-  
-            <!-- Date Picker -->
-            <nz-date-picker 
+  <ng-container>
+    <nz-form-item nz-form-item>
+      <nz-form-label nz-form-label>
+        @if(!field.hidden) {
+        <label [for]="field.name">{{ field.label }}</label>
+        }
+      </nz-form-label>
+      <nz-form-control nz-form-control [nzHasFeedback]="true" [nzErrorTip]="errorTpl"
+        [nzValidateStatus]="formGroup.get(field.name)!">
 
-              [class]="field.className"
-              #datePickerControl
-              *ngSwitchCase="'date'"
-              [nzAllowClear]="true" 
-              [formControlName]="field.name" 
-              [nz-tooltip]="field.tooltip" 
-              [nzPlaceHolder]="field.placeholder" 
-              (ngModelChange)="onFieldChange(field.name, $event)"
-              [nzSize]="'small'">
-            </nz-date-picker>
+        <ng-container [ngSwitch]="field.type">
+          <!-- Input -->
+          <input [class]="field?.className" #inputControl [nz-tooltip]="field.tooltip" *ngSwitchCase="'input'" nz-input
+            [formControlName]="field.name" [placeholder]="field.placeholder"
+            [type]="isPassword(field) ? 'password' : 'text'" (ngModelChange)="onFieldChange(field.name, $event)"
+            (keydown.enter)="onFieldEnter($event)" />
+
+          <!-- Select -->
+          <nz-select #selectControls *ngSwitchCase="'select'" [nz-tooltip]="field.tooltip"
+            [formControlName]="field.name" [class]="field.className" (ngModelChange)="onFieldChange(field.name, $event)"
+            [nzPlaceHolder]="field.placeholder">
+            <nz-option *ngFor="let opt of field.options" [nzLabel]="opt.label" [nzValue]="opt.value"></nz-option>
+          </nz-select>
+
+          <!-- Checkbox -->
+          <label #checkboxControl *ngSwitchCase="'checkbox'" [nz-tooltip]="field.tooltip" nz-checkbox
+            [formControlName]="field.name" [class]="field.className">
+            {{ field.label }}
+          </label>
+
+          <!-- Date Picker -->
+          <nz-date-picker [class]="field.className" #datePickerControl *ngSwitchCase="'date'" [nzAllowClear]="true"
+            [formControlName]="field.name" [nz-tooltip]="field.tooltip" [nzPlaceHolder]="field.placeholder"
+            (ngModelChange)="onFieldChange(field.name, $event)" [nzSize]="'small'">
+          </nz-date-picker>
+
+          <ng-container *ngSwitchCase="'isThirdPartyComponent'">
+            <quill-editor [modules]="quillConfig" />
           </ng-container>
-        </nz-form-control>
 
-          <ng-template #errorTpl let-control>
-            @if(formGroup.get(field.name)?.invalid && (formGroup.get(field.name)?.dirty || formGroup.get(field.name)?.touched)) {
-              <app-control-error-message [control]="formGroup.get(field.name)!" [customMessages]="field.errorMessages" />
-            }
-          </ng-template>
-          
-      </nz-form-item>
-    </ng-container>
+        </ng-container>
+      </nz-form-control>
+
+      <ng-template #errorTpl let-control>
+        @if(formGroup.get(field.name)?.invalid && (formGroup.get(field.name)?.dirty ||
+        formGroup.get(field.name)?.touched)) {
+        <app-control-error-message [control]="formGroup.get(field.name)!" [customMessages]="field.errorMessages" />
+        }
+      </ng-template>
+
+    </nz-form-item>
+  </ng-container>
   }
 
-  <div class="submitBtn">
+  <div [ngStyle]="submitButtonStyle">
     @if(isShowSubmitBtn) {
-      <button nz-button nzType="primary" nzBlock> {{ submitLabel }} </button>
+    <button nz-button nzType="primary" nzBlock> {{ submitLabel }} </button>
     }
   </div>
 </form>

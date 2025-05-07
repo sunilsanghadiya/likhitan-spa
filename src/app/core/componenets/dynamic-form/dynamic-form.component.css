@@ -23,3 +23,25 @@
   .submitBtn {
     padding-top: 2rem;
   }
+  
+  .editor-container {
+    margin: 20px;
+  }
+  
+  button {
+    margin-bottom: 10px;
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  ::ng-deep .ql-container {
+    border: none !important;
+  }
+  
+  ::ng-deep .ql-toolbar {
+    border: none !important;
+  }

@@ -12,5 +12,6 @@ export const ApiEndpoints = {
     GetAuthorById: '/api/author/GetAuthorById',
     BecomeAuthor: '/api/author/BecomeAuthor',
 
-    GetOTP: '/api/auth/GetOTP'
+    GetOTP: '/api/auth/GetOTP',
+    WriteBlog: '/api/auth/WriteBlog'
 }

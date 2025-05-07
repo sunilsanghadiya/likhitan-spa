@@ -137,7 +137,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this._authService.login(raw).subscribe({
       next: (data: LoginResponse) => {
         this.loginData = data;
-        if(!this.loginData.data?.roleId) {
+        if (!this.loginData.data?.roleId) {
           this._notificationService.failedNotification("Account locked", "Due to some reason temporary you account locked");
         }
 
@@ -152,7 +152,10 @@ export class LoginComponent implements OnInit, OnDestroy {
         else if (this.loginData.data.roleId == UserRoles.Admin) {
           this._router.navigate(['/dashboard']);
         }
-        this._helperService.prepareEncryptData(this.loginData.data?.roleId);
+        this._helperService.prepareEncryptData({ 
+          roleId: this.loginData.data?.roleId,
+          authorId: this.loginData.data?.authorId 
+        });
         this._statesService.setData({ roleId: this.loginData.data.roleId });
       },
       error: (error: any) => {

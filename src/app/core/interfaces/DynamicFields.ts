@@ -1,6 +1,6 @@
-import { AbstractControl, FormControl, ValidationErrors } from "@angular/forms";
+import { AbstractControl, ValidationErrors } from "@angular/forms";
 
-export type FieldType = 'input' | 'select' | 'checkbox' | 'date';
+export type FieldType = 'input' | 'select' | 'checkbox' | 'date' | 'isThirdPartyComponent';
 
 export interface BaseField<T> {
   type: FieldType; // 'text', 'number', 'select', 'checkbox', etc.
@@ -18,6 +18,11 @@ export interface BaseField<T> {
   id?: any;
 }
 
+export interface isThirdPartyComponentField<T> extends BaseField<T> {
+  type: 'isThirdPartyComponent',
+  error?: any[]
+}
+
 
 export interface TextField<T> extends BaseField<T> {
   type: 'input' | 'select' | 'checkbox' | 'date';
@@ -30,7 +35,7 @@ export interface SelectField<T> extends BaseField<T> {
   errors?: any[];
 }
 
-export type FormField<T> = TextField<T> | SelectField<T>;
+export type FormField<T> = TextField<T> | SelectField<T> | isThirdPartyComponentField<T>;
 
 export interface ValidationRules {
   required?: boolean;

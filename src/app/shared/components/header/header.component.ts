@@ -158,12 +158,13 @@ export class HeaderComponent implements OnInit {
     this._router.navigate(['/new-blog'])
   }
 
-  checkAuthorId() {
+  async checkAuthorId() {
     this._statesService.data$.subscribe((data: any) => {
       if (data?.authorId) {
         this.isShowWrite = true;
       }
     })
+   
   }
 
 }
