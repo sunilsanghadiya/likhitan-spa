@@ -1,5 +1,6 @@
 import { AfterContentInit, AfterViewInit, Component, computed, effect, ElementRef, EnvironmentInjector, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, runInInjectionContext, 
   Signal, SimpleChanges, 
+  ViewChild, 
   ViewChildren} from '@angular/core';
 import { AsyncValidatorFn, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { NzFormItemComponent } from 'ng-zorro-antd/form';
@@ -24,6 +25,7 @@ import { emailExistsValidatorFactory } from '../../validators/emailExistsValidat
 import { AuthService } from '../../../features/Services/authService/auth.service';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { isEmailDomainSupportValidator } from '../../validators/isEmailDomainSupportValidator';
+import { QuillConfig, QuillEditorComponent, QuillModule } from 'ngx-quill';
 
 
 @Component({
@@ -44,7 +46,8 @@ import { isEmailDomainSupportValidator } from '../../validators/isEmailDomainSup
     NzRadioModule,
     ControlErrorMessageComponent,
     NzCheckboxComponent,
-    NzToolTipModule
+    NzToolTipModule,
+    QuillModule
   ],
   templateUrl: './dynamic-form.component.html',
   styleUrl: './dynamic-form.component.css',
@@ -57,19 +60,45 @@ export class DynamicFormComponent implements OnChanges, AfterViewInit {
   @Input() formFields: any;
   @Input() submitLabel: string = 'Submit';
   @Input() formStyles?: any;
+  @Input() submitButtonStyle?: any;
 
   @Output() onSubmit = new EventEmitter<FormGroup>();
   @Output() formStatusChanged = new EventEmitter<boolean>();
   @Output() dateFieldChanged = new EventEmitter<any>();
   @Output() fieldChanged = new EventEmitter<{ field: string;  value: any; }>();
 
-  @ViewChildren('inputControl') inputControls!: QueryList<ElementRef>;
-  @ViewChildren('selectControl') selectControls!: QueryList<ElementRef>;
-  @ViewChildren('dateControl') dateControls!: QueryList<ElementRef>;
+  toolbarVisible = true;
+  quillEditor: any;
 
   formValueSignal!: Signal<any>;
   formValidSignal!: Signal<boolean>;
   controlErrorsSignalMap: { [key: string]: Signal<any> } = {};
+
+  quillConfig: any = {
+    toolbar: [
+      ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+      ['blockquote', 'code-block'],
+  
+      [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+      [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+      [{ 'direction': 'rtl' }],                         // text direction
+  
+      [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+  
+      [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+      [{ 'font': [] }],
+      [{ 'align': [] }],
+  
+      ['clean'],                                         // remove formatting button
+  
+      ['link', 'image', 'video']                         // link and image, video
+    ]
+  }
+  toolbarElement: HTMLElement | null = null;
+
 
   constructor(public _fb: FormBuilder, private injector: EnvironmentInjector,
     private _authService: AuthService
@@ -77,7 +106,9 @@ export class DynamicFormComponent implements OnChanges, AfterViewInit {
 
 
   ngAfterViewInit() {
-    this.focusFirstControl();
+    setTimeout(() => {
+      this.toolbarElement = document.querySelector('.ql-toolbar');
+    }, 100);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -88,27 +119,6 @@ export class DynamicFormComponent implements OnChanges, AfterViewInit {
   }
 
   
-  focusFirstControl() {
-    setTimeout(() => {
-      const firstInput = this.inputControls?.first;
-      // const firstSelect = this.selectControls?.first;
-      // const firstDate = this.dateControls?.first;
-
-      if (firstInput) {
-        firstInput.nativeElement.focus();
-      } 
-      // else if (firstSelect) {
-      //   const selectInput = firstSelect.nativeElement.querySelector('.ant-select-selection-search-input');
-      //   if (selectInput) {
-      //     selectInput.focus();
-      //   }
-      // }
-      // else if (firstDate) {
-      //   firstDate.nativeElement.querySelector('input').focus();
-      // }
-    });
-  }
-
 
   setupSignals() {
     runInInjectionContext(this.injector, () => {

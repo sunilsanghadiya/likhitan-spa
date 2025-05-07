@@ -4,6 +4,11 @@ import { NzContentComponent, NzLayoutComponent } from 'ng-zorro-antd/layout';
 import { DynamicFormComponent } from "../../core/componenets/dynamic-form/dynamic-form.component";
 import { WriteBlogDto } from '../Common/interfaces/WriteBlogDto';
 import { FormField } from './../../core/interfaces/DynamicFields';
+import { BlogApiService } from '../Services/blogApiService/blog-api.service';
+import { HelperService } from '../../core/Helper/HelperService';
+import { NotificationService } from '../../core/services/nzNotification/nz-notification.service';
+import { WriteBlogResponse } from '../Common/Models/WriteBlogResponse';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-write-blog',
@@ -20,7 +25,9 @@ export class WriteBlogComponent implements OnInit {
   writeBlogForm!: FormGroup;
   formFields!: FormField<WriteBlogDto>[];
 
-  constructor(public _fb: FormBuilder) { }
+  constructor(public _fb: FormBuilder, private _blogApiService: BlogApiService, private _helperService: HelperService,
+    private _notificationService: NotificationService, private _router: Router
+  ) { }
 
   ngOnInit() {
     this.createWriteBlogForm();
@@ -57,8 +64,8 @@ export class WriteBlogComponent implements OnInit {
         ]
       },
       {
-        type: 'input',
-        name: 'body',
+        type: 'isThirdPartyComponent',
+        name: 'content',
         label: 'Content',
         className: 'mediumInputForBodyField',
         placeholder: 'Content',
@@ -89,8 +96,28 @@ export class WriteBlogComponent implements OnInit {
     });
   }
 
-  onSubmitCall(event: any) {
+  async onSubmitCall(event: any) {
+    //new
+    if(event) {
+      let storedData = await this._helperService.prepareDecryptData();
 
+      let payload: WriteBlogDto = {
+        title: event.controls["title"]?.value,
+        content: event.controls['content']?.value,
+        authorId: storedData?.authorId
+      }
+      this._blogApiService.writeBlog(payload).subscribe({
+        next: (response: WriteBlogResponse) => {
+          if(response) {
+            this._router.navigate(['/home']);
+          }
+        },
+        error: (error: any) => {
+          console.log(error)
+          this._notificationService.failedNotification("Oops", "something went wrong!")
+        }
+      })
+    }
   }
 
 }

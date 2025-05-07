@@ -34,12 +34,17 @@ export class HomePageLayoutComponent implements OnInit {
     this.prepareCommonData()
   }
 
-  prepareCommonData() {
+  async prepareCommonData() {
     this._helperService.prepareDecryptData().then((data: any) => {
       if(data?.authorId) {
         this.isShowWrite = true;
       }
     })
+
+    let storedData = await this._helperService.prepareDecryptData();
+    if(storedData) {
+      storedData ? this.isShowWrite = true : this.isShowWrite
+    }
   }
 
 

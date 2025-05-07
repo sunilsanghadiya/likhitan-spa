@@ -1,5 +1,6 @@
 
 export interface WriteBlogDto {
     title: string;
-    body: any;
+    content: any;
+    authorId: number;
 }

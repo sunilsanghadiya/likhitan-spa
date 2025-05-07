@@ -1,3 +1,4 @@
+import { QuillModule } from 'ngx-quill';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideClientHydration, withEventReplay, withHttpTransferCacheOptions } from '@angular/platform-browser';
@@ -20,6 +21,7 @@ export const appConfig: ApplicationConfig = {
     NzModalModule,
     AuthGuard,
     NzModalService,
+    QuillModule,
     provideZoneChangeDetection({ eventCoalescing: true }), 
     provideRouter(routes), 
     provideClientHydration(withEventReplay(), withHttpTransferCacheOptions({
