@@ -11,6 +11,7 @@ import { emailExistsValidatorFactory } from '../../core/validators/emailExistsVa
 import { RegisterResponse } from '../Common/Models/RegisterResponse';
 import { DataStoreService } from '../../core/services/dataStoreService/data-store.service';
 import { isEmailDomainSupportValidator } from '../../core/validators/isEmailDomainSupportValidator';
+import { HelperService } from '../../core/Helper/HelperService';
 
 @Component({
   selector: 'app-register',
@@ -29,7 +30,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   formFields?: any[];
 
   constructor(public _fb: FormBuilder, public _authService: AuthService, public _route: Router,
-    public _dataStoreService: DataStoreService<any>
+    public _dataStoreService: DataStoreService<any>, private _helperService: HelperService
   ) { }
 
   ngOnDestroy() {
@@ -193,8 +194,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this._authService.register(raw).subscribe({
       next: (data: RegisterResponse) => {
         this.registerUserResponse = data;
-        this._dataStoreService.initialize();
-        this._dataStoreService.setData(this.registerUserResponse);
+        this._helperService.prepareEncryptData({ userId: this.registerUserResponse.data?.id });
         this._route.navigate(['/sendotp']);
       },
       error: (error: any) => {
