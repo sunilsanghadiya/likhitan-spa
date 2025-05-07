@@ -60,8 +60,7 @@ export class HeaderComponent implements OnInit {
 
   constructor(private iconService: NzIconService, public _router: Router, public _modelService: ModelService,
     public _authService: AuthService, private _authorApiService: AuthorApiService,
-    public _notificationService: NotificationService, private _helperService: HelperService, private _statesService: StatesService) 
-  {
+    public _notificationService: NotificationService, private _helperService: HelperService, private _statesService: StatesService) {
     this.iconService.addIcon(UserOutline, SettingOutline, LogoutOutline);
   }
 
@@ -141,7 +140,7 @@ export class HeaderComponent implements OnInit {
         next: (response: BecomeAuthorResponse) => {
           if (response.isSuccess) {
             response.authorId ? this.isShowWrite = true : this.isShowWrite = false;
-            this._helperService.prepareEncryptData(response.authorId);
+            this._helperService.prepareEncryptData({ authorId: response.authorId });
             this._statesService.setData(response.authorId);
             this._notificationService.successNotification("Author added", "Congratulations you are become author", "topRight");
           }
