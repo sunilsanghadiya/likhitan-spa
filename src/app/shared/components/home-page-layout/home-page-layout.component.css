@@ -34,3 +34,11 @@
     justify-content: center;
     align-content: center;
   }
+
+nz-sider{
+  background: #FBFBFB !important;
+}
+
+nz-content {
+  background: #FBFBFB !important;
+}

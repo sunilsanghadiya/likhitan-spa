@@ -55,3 +55,7 @@
 .profileAvatar {
   font-size: 1rem;
 }
+
+.writeBlog {
+  cursor: pointer;
+}

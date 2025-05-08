@@ -38,7 +38,7 @@ export class WriteBlogComponent implements OnInit {
   createWriteBlogForm() {
     return this.writeBlogForm = this._fb.group({
       title: [],
-      body: []
+      content: []
     })
   }
 
@@ -66,16 +66,17 @@ export class WriteBlogComponent implements OnInit {
       {
         type: 'isThirdPartyComponent',
         name: 'content',
-        label: 'Content',
+        label: '',
+        id: 'thirdPartyInId',
         className: 'mediumInputForBodyField',
-        placeholder: 'Content',
+        placeholder: 'Write something...',
         hidden: true,
         validations: {
           required: true,
           minLength: 10
         },
         errorMessages: [
-          { require: 'Password is required.' },
+          { require: 'content is required.' },
           { minLength: 'Min 10 character.' }
         ]
       }
@@ -97,26 +98,45 @@ export class WriteBlogComponent implements OnInit {
   }
 
   async onSubmitCall(event: any) {
-    //new
-    if(event) {
-      let storedData = await this._helperService.prepareDecryptData();
-
-      let payload: WriteBlogDto = {
-        title: event.controls["title"]?.value,
-        content: event.controls['content']?.value,
-        authorId: storedData?.authorId
+    if (!event) {
+      return;
+    }
+  
+    try {
+      const storedData = await this._helperService.prepareDecryptData();
+      
+      if (!storedData?.authorId) {
+        this._notificationService.failedNotification("Error", "Author information not found");
+        return;
       }
+  
+      const payload: WriteBlogDto = {
+        title: event.controls["title"]?.value?.trim(),
+        content: event.controls['content']?.value?.trim(),
+        authorId: storedData.authorId
+      };
+  
+      if (!payload.title || !payload.content) {
+        this._notificationService.failedNotification("Validation Error", "Title and content are required");
+        return;
+      }
+  
       this._blogApiService.writeBlog(payload).subscribe({
         next: (response: WriteBlogResponse) => {
-          if(response) {
+          if (response) {
+            this._notificationService.successNotification("Success", "Blog created successfully");
             this._router.navigate(['/home']);
           }
         },
         error: (error: any) => {
-          console.log(error)
-          this._notificationService.failedNotification("Oops", "something went wrong!")
+          console.error('Blog creation error:', error);
+          const errorMessage = error.error?.message || 'Something went wrong!';
+          this._notificationService.failedNotification("Error", errorMessage);
         }
-      })
+      });
+    } catch (error) {
+      console.error('Error in onSubmitCall:', error);
+      this._notificationService.failedNotification("Error", "Failed to process your request");
     }
   }
 

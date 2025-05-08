@@ -1,0 +1,19 @@
+
+.feedColumn {
+    display: flex;
+    justify-content: center;
+}
+
+.feedCard {
+    width: 700px;
+}
+
+.custom-footer {
+    text-align: right;
+    padding: 10px;
+  }
+
+  nz-card-footer {
+    padding-top: 1rem;
+    background-color: #f0f2f5;
+  }
