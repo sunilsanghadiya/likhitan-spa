@@ -21,6 +21,7 @@ export class HelperService {
         return true; // or some logic based on res
       }),
       catchError((error: any) => {
+        localStorage.clear();
         console.log(error);
         return of(false);
       })

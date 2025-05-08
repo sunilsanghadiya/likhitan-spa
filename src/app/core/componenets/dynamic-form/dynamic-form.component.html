@@ -36,9 +36,7 @@
             (ngModelChange)="onFieldChange(field.name, $event)" [nzSize]="'small'">
           </nz-date-picker>
 
-          <ng-container *ngSwitchCase="'isThirdPartyComponent'">
-            <quill-editor [modules]="quillConfig" />
-          </ng-container>
+          <quill-editor *ngSwitchCase="'isThirdPartyComponent'" [modules]="quillConfig" [formControlName]="field.name" />
 
         </ng-container>
       </nz-form-control>

@@ -1,8 +1,22 @@
-
 <nz-layout>
     <nz-content>
-        <div nz-col>
-            <app-content />
+        <div nz-col class="feedColumn">
+            @for(blog of blogs; track blog.id) {
+            <nz-card class="feedCard" nzHoverable [nzTitle]="blog.title" [nzLoading]="isShowLoader">
+                <div nz-row [nzGutter]="2">
+                    <div nz-col class="gutter-row" [nzSpan]="12">
+                        <div class="inner-box"> {{ blog.content }} </div>
+                    </div>
+                </div>
+                <div nz-card-footer class="custom-footer">
+                    <button nz-button nzType="primary" nzBlock> Like </button>
+                    <!-- <app-dynamic-form
+                            [formFields]=""
+                            [formGroup]=""  
+                        /> -->
+                </div>
+            </nz-card>
+            }
         </div>
     </nz-content>
 </nz-layout>
