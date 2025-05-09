@@ -1,22 +1,23 @@
 <nz-layout>
     <nz-content>
+        @for(blog of blogs; track $index) {
         <div nz-col class="feedColumn">
-            @for(blog of blogs; track blog.id) {
             <nz-card class="feedCard" nzHoverable [nzTitle]="blog.title" [nzLoading]="isShowLoader">
-                <div nz-row [nzGutter]="2">
-                    <div nz-col class="gutter-row" [nzSpan]="12">
-                        <div class="inner-box"> {{ blog.content }} </div>
-                    </div>
+                <div class="card-content">
+                    <app-quill-content-viewer [content]="blog.content" />
                 </div>
                 <div nz-card-footer class="custom-footer">
-                    <button nz-button nzType="primary" nzBlock> Like </button>
-                    <!-- <app-dynamic-form
-                            [formFields]=""
-                            [formGroup]=""  
-                        /> -->
+                    <button nz-button nzType="default" nzSize="small">
+                        <span nzType="like" nzTheme="outline"> </span>
+                    </button>
+                    <span class="commentFormCls">
+                        <app-dynamic-form [externalData]="{ blogId: blog?.blogId }" [formFields]="formFields"
+                            [formGroup]="commentForm" (customEvent)="onEnterKeyPressed($event)"
+                            (onSubmit)="onSendComment($event)" [submitLabel]="'Submit'" (controlClicked)="onControlClicked($event)" />
+                    </span>
                 </div>
             </nz-card>
-            }
         </div>
+        }
     </nz-content>
 </nz-layout>

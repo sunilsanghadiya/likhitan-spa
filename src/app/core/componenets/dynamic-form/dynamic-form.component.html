@@ -13,27 +13,27 @@
         <ng-container [ngSwitch]="field.type">
           <!-- Input -->
           <input [class]="field?.className" #inputControl [nz-tooltip]="field.tooltip" *ngSwitchCase="'input'" nz-input
-            [formControlName]="field.name" [placeholder]="field.placeholder"
+            [formControlName]="field.name" [placeholder]="field.placeholder" (click)="onControlClick(field)"
             [type]="isPassword(field) ? 'password' : 'text'" (ngModelChange)="onFieldChange(field.name, $event)"
-            (keydown.enter)="onFieldEnter($event)" />
+            (keydown.enter)="onFieldEnter($any($event))" />
 
           <!-- Select -->
           <nz-select #selectControls *ngSwitchCase="'select'" [nz-tooltip]="field.tooltip"
             [formControlName]="field.name" [class]="field.className" (ngModelChange)="onFieldChange(field.name, $event)"
-            [nzPlaceHolder]="field.placeholder">
+            [nzPlaceHolder]="field.placeholder" (click)="onControlClick(field)">
             <nz-option *ngFor="let opt of field.options" [nzLabel]="opt.label" [nzValue]="opt.value"></nz-option>
           </nz-select>
 
           <!-- Checkbox -->
           <label #checkboxControl *ngSwitchCase="'checkbox'" [nz-tooltip]="field.tooltip" nz-checkbox
-            [formControlName]="field.name" [class]="field.className">
+            [formControlName]="field.name" [class]="field.className" (click)="onControlClick(field)">
             {{ field.label }}
           </label>
 
           <!-- Date Picker -->
           <nz-date-picker [class]="field.className" #datePickerControl *ngSwitchCase="'date'" [nzAllowClear]="true"
             [formControlName]="field.name" [nz-tooltip]="field.tooltip" [nzPlaceHolder]="field.placeholder"
-            (ngModelChange)="onFieldChange(field.name, $event)" [nzSize]="'small'">
+            (ngModelChange)="onFieldChange(field.name, $event)" [nzSize]="'small'" (click)="onControlClick(field)">
           </nz-date-picker>
 
           <quill-editor *ngSwitchCase="'isThirdPartyComponent'" [modules]="quillConfig" [formControlName]="field.name" />

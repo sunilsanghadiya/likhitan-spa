@@ -24,6 +24,7 @@ import { LogoutResponse } from '../../../features/Common/Models/LogoutResponse';
 import { AuthorApiService } from '../../../features/Services/authorApiService/author-api.service';
 import { AuthService } from '../../../features/Services/authService/auth.service';
 import { UserRoles } from '../../../core/enums/UserRoles';
+import { UserAvatarComponent } from "../../../core/componenets/user-avatar/user-avatar.component";
 
 @Component({
   selector: 'app-header',
@@ -37,8 +38,9 @@ import { UserRoles } from '../../../core/enums/UserRoles';
     NzInputModule,
     NzMenuModule,
     NzDropDownModule,
-    NzTypographyModule
-  ],
+    NzTypographyModule,
+    UserAvatarComponent
+],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
   providers: [
@@ -57,6 +59,7 @@ export class HeaderComponent implements OnInit {
   searchIcon = '';
   userAvatarUrl: string = '';
   public modalDataSubject = new Subject<any>();
+  loggedInUserDetail?: any;
 
   constructor(private iconService: NzIconService, public _router: Router, public _modelService: ModelService,
     public _authService: AuthService, private _authorApiService: AuthorApiService,
@@ -101,6 +104,7 @@ export class HeaderComponent implements OnInit {
       nzClosable: true,
       nzDraggable: true,
       nzCentered: true,
+      nzKeyboard: true, 
       onCancel: () => {
         return new EventEmitter<void>();
       },
@@ -164,7 +168,10 @@ export class HeaderComponent implements OnInit {
         this.isShowWrite = true;
       }
     })
-   
+    let storedData = await this._helperService.prepareDecryptData();
+    if(storedData?.name) {
+      this.loggedInUserDetail = storedData;
+    }
   }
 
 }

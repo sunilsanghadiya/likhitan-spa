@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { WriteBlogResponse } from '../../Common/Models/WriteBlogResponse';
 import { ApiEndpoints } from '../../Common/ApiEndpoints/ApiEndpoint';
 import { GetBlogsResponse } from '../../Common/Models/GetBlogsResponse';
+import { BlogCommentResponse } from '../../Common/Models/BlogCommentResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -19,4 +20,9 @@ export class BlogApiService {
   getBlogs(body: any = {}): Observable<GetBlogsResponse> {
     return this._apiService.post(ApiEndpoints.GetBlogs, body);
   }
+
+  blogAction(body: any = {}): Observable<BlogCommentResponse> {
+    return this._apiService.post(ApiEndpoints.BlogAction, body);
+  }
+
 }

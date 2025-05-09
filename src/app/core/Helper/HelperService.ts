@@ -4,6 +4,7 @@ import { catchError, map, Observable, of, throwError } from "rxjs";
 import { AuthService } from "../../features/Services/authService/auth.service";
 import { ModelService } from "../services/modelService/model.service";
 import { Env } from "../../../env/env";
+import { FormControl, FormGroup } from "@angular/forms";
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ export class HelperService {
 
   passwordPattern = new RegExp(`^(?!<username>).*?(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':"\\\\|,.<>\\/?]).{8,}$`);
   isModalVisible: boolean = false;
+  isSubmitting: boolean = true;
 
   constructor(public _authService: AuthService, private _modelService: ModelService) { }
 
@@ -111,4 +113,17 @@ export class HelperService {
   async prepareDecryptData() {
     return await this.decryptData();
   }
+
+  public prepareFormFieldStyles(formFields?: any) {
+    formFields = formFields?.map((field: any) => {
+      if (field.className) {
+        return {
+          ...field,
+          className: field.className
+        };
+      }
+      return field;
+    });
+  }
+  
 }

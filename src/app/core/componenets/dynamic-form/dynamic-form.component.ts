@@ -1,32 +1,34 @@
-import { AfterContentInit, AfterViewInit, Component, computed, effect, ElementRef, EnvironmentInjector, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, runInInjectionContext, 
-  Signal, SimpleChanges, 
-  ViewChild, 
-  ViewChildren} from '@angular/core';
-import { AsyncValidatorFn, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
-import { NzFormItemComponent } from 'ng-zorro-antd/form';
-import { NzFormLabelComponent } from 'ng-zorro-antd/form';
-import { NzFormControlComponent } from 'ng-zorro-antd/form';
-import { NzSelectComponent } from 'ng-zorro-antd/select';
-import { NzOptionComponent } from 'ng-zorro-antd/select';
-import { NzDatePickerComponent } from 'ng-zorro-antd/date-picker';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { NzRadioModule } from 'ng-zorro-antd/radio';
-import { ControlErrorMessageComponent } from "../control-error-message/control-error-message.component";
-import { ValidationRules } from '../../interfaces/DynamicFields';
-import { NzCheckboxComponent } from 'ng-zorro-antd/checkbox';
-import { matchOtherValidator } from '../../validators/PasswordValidator';
+import {
+  AfterViewInit, Component, computed, effect,
+  EnvironmentInjector, EventEmitter, Input, OnChanges,
+  Output,
+  runInInjectionContext,
+  Signal, SimpleChanges
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { emailExistsValidatorFactory } from '../../validators/emailExistsValidatorFactory';
-import { AuthService } from '../../../features/Services/authService/auth.service';
+import { AsyncValidatorFn, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzCheckboxComponent } from 'ng-zorro-antd/checkbox';
+import { NzDatePickerComponent, NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzFormControlComponent, NzFormItemComponent, NzFormLabelComponent, NzFormModule } from 'ng-zorro-antd/form';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NzOptionComponent, NzSelectComponent } from 'ng-zorro-antd/select';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { QuillModule } from 'ngx-quill';
+import { AuthService } from '../../../features/Services/authService/auth.service';
+import { ValidationRules } from '../../interfaces/DynamicFields';
+import { emailExistsValidatorFactory } from '../../validators/emailExistsValidatorFactory';
 import { isEmailDomainSupportValidator } from '../../validators/isEmailDomainSupportValidator';
-import { QuillConfig, QuillEditorComponent, QuillModule } from 'ngx-quill';
+import { matchOtherValidator } from '../../validators/PasswordValidator';
+import { ControlErrorMessageComponent } from "../control-error-message/control-error-message.component";
+import { HelperService } from '../../Helper/HelperService';
 
+interface OnSubmitType {
+  dynamicForm: FormGroup,
+  callBack: () => void
+}
 
 @Component({
   selector: 'app-dynamic-form',
@@ -61,11 +63,14 @@ export class DynamicFormComponent implements OnChanges, AfterViewInit {
   @Input() submitLabel: string = 'Submit';
   @Input() formStyles?: any;
   @Input() submitButtonStyle?: any;
+  @Input() externalData?: any;
 
-  @Output() onSubmit = new EventEmitter<FormGroup>();
+  @Output() onSubmit = new EventEmitter<OnSubmitType>();
   @Output() formStatusChanged = new EventEmitter<boolean>();
   @Output() dateFieldChanged = new EventEmitter<any>();
-  @Output() fieldChanged = new EventEmitter<{ field: string;  value: any; }>();
+  @Output() fieldChanged = new EventEmitter<{ field: string; value: any; }>();
+  @Output() customEvent = new EventEmitter<any>();
+  @Output() controlClicked = new EventEmitter<any>();
 
   toolbarVisible = true;
   quillEditor: any;
@@ -79,20 +84,20 @@ export class DynamicFormComponent implements OnChanges, AfterViewInit {
       ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
       ['blockquote', 'code-block'],
       [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-      [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      [{ 'script': 'sub' }, { 'script': 'super' }],      // superscript/subscript
+      [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
       [{ 'direction': 'rtl' }],                         // text direction
-  
+
       [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
       [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-  
+
       [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
       [{ 'font': [] }],
       [{ 'align': [] }],
-  
+
       ['clean'],                                         // remove formatting button
-  
+
       ['link', 'image', 'video']                         // link and image, video
     ]
   }
@@ -100,7 +105,7 @@ export class DynamicFormComponent implements OnChanges, AfterViewInit {
 
 
   constructor(public _fb: FormBuilder, private injector: EnvironmentInjector,
-    private _authService: AuthService
+    private _authService: AuthService, private _helperService: HelperService
   ) { }
 
 
@@ -117,20 +122,20 @@ export class DynamicFormComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  
+
 
   setupSignals() {
     runInInjectionContext(this.injector, () => {
       this.formValueSignal = toSignal(this.formGroup.valueChanges, {
         initialValue: this.formGroup.value,
       });
-  
+
       this.formValidSignal = computed(() => this.formGroup.valid);
-  
+
       effect(() => {
         this.formStatusChanged.emit(this.formValidSignal());
       });
-  
+
       for (const key of Object.keys(this.formGroup.controls)) {
         const control = this.formGroup.get(key)!;
         this.controlErrorsSignalMap[key] = computed(() => {
@@ -158,8 +163,8 @@ export class DynamicFormComponent implements OnChanges, AfterViewInit {
       if (rules.email) {
         validators.push(Validators.email);
       }
-      
-      if (rules?.customValidators?.length)  { 
+
+      if (rules?.customValidators?.length) {
         rules.customValidators.forEach((validator: any) => {
           validators.push(validator)
         })
@@ -167,7 +172,7 @@ export class DynamicFormComponent implements OnChanges, AfterViewInit {
       };
 
 
-      if(rules.parentControl?.controlName) validators.push(matchOtherValidator(rules?.parentControl?.controlName));
+      if (rules.parentControl?.controlName) validators.push(matchOtherValidator(rules?.parentControl?.controlName));
 
       if (rules.isServerSideCheck) {
         asyncValidators.push(emailExistsValidatorFactory(this._authService, rules.isFieldValid));
@@ -176,13 +181,13 @@ export class DynamicFormComponent implements OnChanges, AfterViewInit {
       group[field.name] = this._fb.control({
         value: this.formGroup.get(field.name)?.value, disabled: field.disabled ?? false
       },
-      {
-        validators,
-        asyncValidators,
-        updateOn: 'blur'
-      }
+        {
+          validators,
+          asyncValidators,
+          updateOn: 'blur'
+        }
       );
-      
+
     }
     this.formGroup = this._fb.group(group);
   }
@@ -193,23 +198,53 @@ export class DynamicFormComponent implements OnChanges, AfterViewInit {
       this.formGroup.markAllAsTouched();
       return;
     }
-    this.onSubmit.emit(event);
+    this.onSubmit.emit({ dynamicForm: event, callBack: () => { this.resetForm(this.formGroup) } });
   }
+
+
 
   isPassword(field: any): boolean {
     return field.name.toLowerCase().includes('password');
   }
 
   onFieldChange(field: string, value: any) {
-    this.fieldChanged.emit({ field, value});
+    this.fieldChanged.emit({ field, value });
   }
 
-  onFieldEnter(event: KeyboardEvent | Event) {
-    event.preventDefault();
-    
-    if (this.formGroup.valid) {
-      this.callSubmit(event);
-    }
+  onFieldEnter(event: KeyboardEvent) {
+    // // event.preventDefault();
+    // if(event.key == 'Enter') {
+    //   this.customEvent.emit({ type: 'enterKeyPressed', event: event }); 
+    // }
   }
-  
+
+  onControlClick(field: any) {
+    this.controlClicked.emit({
+      field: field.name,
+      fieldData: field,
+      externalData: this.externalData,
+      formValue: this.formGroup.value
+    });
+  }
+
+
+  resetForm(form: FormGroup) {
+
+    Object.keys(form.controls).forEach(key => {
+      const control = form.get(key);
+
+      if (control instanceof FormControl) {
+        control.reset();
+        control.setErrors(null);
+        control.markAsUntouched();
+        control.markAsPristine();
+      }
+    });
+
+    form.markAsUntouched();
+    form.markAsPristine();
+  }
+
+
+
 }

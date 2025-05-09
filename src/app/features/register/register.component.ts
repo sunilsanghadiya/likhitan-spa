@@ -183,12 +183,12 @@ export class RegisterComponent implements OnInit, OnDestroy {
     if(event.invalid || this.registerForm.get('password')?.value !== this.registerForm.get('confirmPassword')?.value) return;
     let raw = {
       id: 0,
-      firstname: event.controls['firstName']?.value,
-      lastname: event.controls['lastName']?.value,
-      email: event.controls["email"]?.value,
-      password: event.controls['password']?.value,
-      confirmPassword: event.controls['confirmPassword']?.value,
-      isTeamsAndConditionAccepted: event.controls['isTeamsAndConditionAccepted'].value
+      firstname: event.dynamicForm.controls['firstName']?.value,
+      lastname: event.dynamicForm.controls['lastName']?.value,
+      email: event.dynamicForm.controls["email"]?.value,
+      password: event.dynamicForm.controls['password']?.value,
+      confirmPassword: event.dynamicForm.controls['confirmPassword']?.value,
+      isTeamsAndConditionAccepted: event.dynamicForm.controls['isTeamsAndConditionAccepted'].value
     }
 
     this._authService.register(raw).subscribe({
