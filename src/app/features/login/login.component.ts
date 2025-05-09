@@ -130,8 +130,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (this.loginForm.invalid) return;
 
     let raw: LoginModel = {
-      email: event.controls['email']?.value,
-      password: event.controls['password']?.value
+      email: event.dynamicForm.controls['email']?.value,
+      password: event.dynamicForm.controls['password']?.value
     }
 
     this._authService.login(raw).subscribe({
@@ -145,7 +145,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           this._router.navigate(['/home']);
         }
         else if (this.loginData.data.roleId == UserRoles.Author) {
-          this._helperService.prepareEncryptData(this.loginData.data?.authorId);
+          this._helperService.prepareEncryptData({ loggedInUserData: this.loginData.data});
           this._statesService.setData({ authorId: this.loginData.data.authorId });
           this._router.navigate(['/home']);
         }
@@ -153,6 +153,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           this._router.navigate(['/dashboard']);
         }
         this._helperService.prepareEncryptData({ 
+          userId: this.loginData.data.id,
           roleId: this.loginData.data?.roleId,
           authorId: this.loginData.data?.authorId 
         });

@@ -111,8 +111,8 @@ export class WriteBlogComponent implements OnInit {
       }
   
       const payload: WriteBlogDto = {
-        title: event.controls["title"]?.value?.trim(),
-        content: event.controls['content']?.value?.trim(),
+        title: event.dynamicForm.controls["title"]?.value?.trim(),
+        content: event.dynamicForm.controls['content']?.value?.trim(),
         authorId: storedData.authorId
       };
   

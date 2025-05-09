@@ -108,9 +108,9 @@ export class ForgotPasswordComponent implements OnInit {
   onForgotPassword(event: any) {
     if (event) {
       let payload = {
-        email: event.controls["email"]?.value,
-        password: event.controls["newPassword"]?.value,
-        confirmPassword: event.controls["newConfirmPassword"]?.value
+        email: event.dynamicForm.controls["email"]?.value,
+        password: event.dynamicForm.controls["newPassword"]?.value,
+        confirmPassword: event.dynamicForm.controls["newConfirmPassword"]?.value
       }
 
       this._authService.forgotPassWord(payload).subscribe({

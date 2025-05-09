@@ -1,0 +1,23 @@
+/* quill-content-viewer.component.css */
+.quill-rendered-content {
+    word-wrap: break-word;
+  }
+  
+  .quill-rendered-content p {
+    margin-bottom: 1rem;
+  }
+  
+  .quill-rendered-content img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .quill-rendered-content ul,
+  .quill-rendered-content ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .quill-rendered-content iframe {
+    max-width: 100%;
+  }

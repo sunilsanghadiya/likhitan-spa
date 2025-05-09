@@ -1,0 +1,7 @@
+
+
+@if(userAvatarUrl) {
+    <nz-avatar nzSize="small" nzIcon="user" [nzSrc]="userAvatarUrl" class="profileAvatar" style="cursor: pointer;"></nz-avatar>
+}@else {
+    <div [ngStyle]="style" [title]="name">{{ initials }}</div>
+}

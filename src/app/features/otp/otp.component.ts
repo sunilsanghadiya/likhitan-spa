@@ -51,7 +51,7 @@ export class OtpComponent implements OnInit {
     let storedData = await this._helperService.prepareDecryptData();
 
     let payload = {
-      otp: event.controls['otp']?.value,
+      otp: event.dynamicForm.controls['otp']?.value,
       userId: storedData?.userId ?? 0
     }
 

@@ -22,7 +22,8 @@
             </div>
 
             <div nz-dropdown [nzDropdownMenu]="menu" nzTrigger="hover" nzPlacement="topRight">
-                <nz-avatar nzSize="small" nzIcon="user" [nzSrc]="userAvatarUrl" class="profileAvatar" style="cursor: pointer;"></nz-avatar>
+                <!-- <nz-avatar nzSize="small" nzIcon="user" [nzSrc]="userAvatarUrl" class="profileAvatar" style="cursor: pointer;"></nz-avatar> -->
+                <app-user-avatar [fontSizeRatio]="5" [name]="loggedInUserDetail?.name" [userAvatarUrl]="loggedInUserDetail?.imageUrl" />
             </div>
 
             <nz-dropdown-menu #menu="nzDropdownMenu">
@@ -37,8 +38,13 @@
                     </li>
                     <li nz-menu-divider></li>
                     <li nz-menu-item (click)="onLogoutClick()" nzDanger>
-                        <span nz-icon nzType="logout" style="padding-right: 0.5rem;"></span>
-                        <span>Logout</span>
+                        <div>
+                            <span nz-icon nzType="logout" style="padding-right: 0.5rem;"></span>
+                            <span>Logout</span> 
+                            <span style="padding-left: 3rem;">
+                                <strong>user</strong>
+                            </span>
+                        </div>
                     </li>
                 </ul>
             </nz-dropdown-menu>

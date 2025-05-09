@@ -14,5 +14,6 @@ export const ApiEndpoints = {
 
     GetOTP: '/api/auth/GetOTP',
     WriteBlog: '/api/blog/WriteBlog',
-    GetBlogs: '/api/blog/GetBlogs'
+    GetBlogs: '/api/blog/GetBlogs',
+    BlogAction: '/api/blog/BlogAction'
 }

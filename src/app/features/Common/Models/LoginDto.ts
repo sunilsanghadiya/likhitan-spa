@@ -10,4 +10,6 @@ export interface LoginResponse extends ApiResponse<LoginResponse> {
     accessToken: string;
     refreshToken: string;
     authorId?: number;
+    imageUrl?: string;
+    thumbnailUrl?: string;
 }
