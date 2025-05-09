@@ -28,9 +28,7 @@
             ],
             "styles": [
                "src/styles.less",
-               "ng-zorro-antd/ng-zorro-antd.min.css",
-                "node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
-                "node_modules/@ant-design/icons-angular/icons.css"
+                "ng-zorro-antd/ng-zorro-antd.min.css"
             ],
             "scripts": [],
             "server": "src/main.server.ts",

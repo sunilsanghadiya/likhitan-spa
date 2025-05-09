@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import * as DOMPurify from 'dompurify';
+import DOMPurify from 'dompurify';
 
 @Component({
   selector: 'app-quill-content-viewer',
@@ -26,7 +26,7 @@ export class QuillContentViewerComponent implements OnChanges {
 
   private updateContent(): void {
     if (this.sanitize) {
-      const clean = DOMPurify.default.sanitize(this.content);
+      const clean = DOMPurify.sanitize(this.content);
       this.safeContent = this._sanitizer.bypassSecurityTrustHtml(clean);
     } else {
       this.safeContent = this._sanitizer.bypassSecurityTrustHtml(this.content);
